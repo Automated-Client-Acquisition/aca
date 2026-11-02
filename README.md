@@ -18,6 +18,7 @@
 
 <p align="center">
   <a href="https://www.automatedclientacquisition.com/get-started"><b>Try the hosted version</b></a> ·
+  <a href="#install">Install</a> ·
   <a href="https://www.automatedclientacquisition.com">Website</a> ·
   <a href="https://www.automatedclientacquisition.com/developers">API</a> ·
   <a href="https://github.com/seguelaCedric/aca-cli">CLI</a> ·
@@ -133,6 +134,93 @@ Same product, same code. Pick who runs the servers.
 
 **[Start on the hosted version](https://www.automatedclientacquisition.com/get-started)**: build a
 free preview from your website first, no account needed.
+
+## Install
+
+### Hosted, in a few minutes
+
+1. Open [automatedclientacquisition.com/get-started](https://www.automatedclientacquisition.com/get-started)
+   and enter your website. ACA drafts your buyer profile, a first email and content before you
+   create an account.
+2. Create your workspace.
+3. Connect your senders: LinkedIn under **Settings → LinkedIn & social**, email under
+   **Settings → Mailboxes** (Microsoft 365, Google, or any SMTP and IMAP inbox).
+
+### Connect your AI agent (MCP)
+
+ACA has a remote MCP server, so Claude, Codex, Cursor and other agents can find leads, build
+campaigns and answer replies in your workspace. You sign in with OAuth; there is no API key to
+paste.
+
+**Claude (claude.ai or Claude Desktop):** Settings → Connectors → Add custom connector. Name it
+ACA, use this URL, then click Connect and sign in.
+
+```text
+https://mcp.automatedclientacquisition.com/mcp
+```
+
+**Claude Code:**
+
+```bash
+claude plugin marketplace add seguelaCedric/automated-client-acquisition-plugins
+claude plugin install automated-client-acquisition@automated-client-acquisition
+```
+
+**Cursor:** Settings → MCP → Add new MCP server:
+
+```json
+{
+  "mcpServers": {
+    "aca": {
+      "type": "http",
+      "url": "https://mcp.automatedclientacquisition.com/mcp"
+    }
+  }
+}
+```
+
+Setup for Codex, OpenClaw and other clients is on the [MCP page](https://www.automatedclientacquisition.com/mcp).
+
+### CLI
+
+Create a token under [Settings → CLI Tokens](https://www.automatedclientacquisition.com/settings/tokens), then:
+
+```bash
+npm install -g @seguelac/aca-cli
+aca login --token aca_your_token
+aca campaign ls
+```
+
+Every command takes `--json` for scripts and agents. See [aca-cli](https://github.com/seguelaCedric/aca-cli).
+
+### n8n
+
+On n8n Cloud: Settings → Community nodes → Install, then enter `n8n-nodes-aca`. On your own n8n,
+run `npm install n8n-nodes-aca` and restart it. Add an **ACA API** credential with a token from
+Settings → CLI Tokens.
+
+### REST API
+
+The same token works on every `/v1` endpoint ([reference](https://www.automatedclientacquisition.com/developers)):
+
+```bash
+curl https://api.automatedclientacquisition.com/v1/lists \
+  -H "Authorization: Bearer $ACA_TOKEN"
+```
+
+### Self-hosting
+
+The install guide ships with the code. Watch this repo to get it. What you'll need:
+
+- Node.js (we build on 22)
+- A Supabase project, on Supabase Cloud or self-hosted with Docker, and the Supabase CLI
+- Docker or a Fly.io account for the background workers (sending, inbox sync, warmup)
+- Your own provider keys: an AI provider such as OpenRouter, and a Unipile account for LinkedIn,
+  WhatsApp and Telegram
+- A domain for the app
+
+Setup will be: clone, create the database from one baseline migration, then start the app and
+workers with Docker Compose.
 
 ### ACA Network
 
