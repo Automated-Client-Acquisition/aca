@@ -45,16 +45,18 @@ one place.
 |---|---|---|---|
 | **Instantly** | Cold email: sequences, mailbox rotation, warmup, a shared inbox | $47/mo for 5,000 emails, $97/mo for 125,000 | Email sequences with mailbox rotation, a warmup network that checks inbox placement, and one inbox for every reply |
 | **HeyReach** | LinkedIn outreach from several accounts | $79 per LinkedIn sender per month | LinkedIn campaigns (connection requests, messages, InMail) across your connected accounts, with email steps in the same sequence |
-| **Gojiberry** | Finding warm leads from buying signals | $99/mo for 1,800 prospects contacted | Buying signals (hiring, funding, acquisitions, leadership changes, growth) and the people engaging with your posts or a competitor's, scored against your ICP |
+| **Gojiberry** | Finding warm leads from buying signals | $99 per user per month, plus $59 per extra AI agent | Buying signals (hiring, funding, acquisitions, leadership changes, growth) and the people engaging with your posts or a competitor's, scored against your ICP |
 
-A team with three LinkedIn senders sending 20,000 cold emails a month pays **$433 a month** for
-those three tools ($97 + 3 × $79 + $99). ACA is **$67 a month hosted**, or **$0 on your own
-servers**, with no per-seat or per-sender platform fee.
+A team of three, each with their own LinkedIn account, sending 20,000 cold emails a month, pays
+**$631 a month** for those three tools: Instantly $97, HeyReach 3 × $79 and Gojiberry 3 × $99.
+Add a fourth person and the bill grows again. ACA is **$67 a month hosted** or **$0 on your own
+servers**, with unlimited seats and no per-sender platform fee.
 
-<sub>Prices from each vendor's pricing page on 2 November 2026, monthly billing. With any of
-these tools, including ACA, you still pay for your mailboxes and domains, your AI model usage,
-and the provider that connects LinkedIn, WhatsApp and Telegram accounts (Unipile). ACA adds no
-markup on any of them.</sub>
+<sub>Prices from each vendor's pricing page on 2 November 2026, monthly billing; Gojiberry's
+per-user price is from its [pricing guide](https://help.gojiberry.ai/en/articles/12960396-gojiberry-pricing-explained).
+With any of these tools, including ACA, you still pay for your mailboxes and domains, your AI
+model usage, and the provider that connects LinkedIn, WhatsApp and Telegram accounts (Unipile).
+ACA adds no markup on any of them.</sub>
 
 ## What's inside
 
