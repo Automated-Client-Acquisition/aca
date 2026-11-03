@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <radialGradient id="ocBody" cx="50%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#FF5F62"/>
+      <stop offset="60%" stop-color="#E63946"/>
+      <stop offset="100%" stop-color="#C42535"/>
+    </radialGradient>
+    <radialGradient id="ocClaw" cx="40%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#FF5F62"/>
+      <stop offset="100%" stop-color="#C42535"/>
+    </radialGradient>
+  </defs>
+
+  <line x1="42" y1="24" x2="36" y2="8" stroke="#E63946" stroke-width="2.4" stroke-linecap="round"/>
+  <circle cx="36" cy="7" r="2" fill="#E63946"/>
+  <line x1="58" y1="24" x2="64" y2="8" stroke="#E63946" stroke-width="2.4" stroke-linecap="round"/>
+  <circle cx="64" cy="7" r="2" fill="#E63946"/>
+
+  <ellipse cx="22" cy="52" rx="8" ry="6.5" fill="url(#ocClaw)"/>
+  <ellipse cx="78" cy="52" rx="8" ry="6.5" fill="url(#ocClaw)"/>
+
+  <ellipse cx="50" cy="52" rx="32" ry="30" fill="url(#ocBody)"/>
+
+  <ellipse cx="40" cy="46" rx="6.5" ry="7" fill="#15140F"/>
+  <ellipse cx="60" cy="46" rx="6.5" ry="7" fill="#15140F"/>
+  <circle cx="42.5" cy="44" r="2.6" fill="#5DECC9"/>
+  <circle cx="62.5" cy="44" r="2.6" fill="#5DECC9"/>
+  <circle cx="43.5" cy="43" r="0.9" fill="#FFFFFF"/>
+  <circle cx="63.5" cy="43" r="0.9" fill="#FFFFFF"/>
+
+  <rect x="41" y="80" width="6" height="11" rx="2" fill="#C42535"/>
+  <rect x="53" y="80" width="6" height="11" rx="2" fill="#C42535"/>
+</svg>

@@ -1,0 +1,38 @@
+# fly.toml for aca-list-building-scraper
+#
+# Playwright worker for the ACA List Building Engine. Scrapes Google Maps,
+# LinkedIn company search, directories (BBB), and company DM pages.
+#
+
+app = 'aca-list-building-scraper'
+primary_region = 'iad'
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [http_service.concurrency]
+    type = 'requests'
+    hard_limit = 4
+    soft_limit = 2
+
+[checks]
+  [checks.health]
+    port = 8080
+    type = 'http'
+    interval = '15s'
+    timeout = '5s'
+    grace_period = '30s'
+    method = 'get'
+    path = '/health'
+
+[[vm]]
+  cpu_kind = 'shared'
+  cpus = 2
+  memory_mb = 2048

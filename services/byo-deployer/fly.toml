@@ -1,0 +1,38 @@
+# Fly.io app config for the BYO deployer.
+# Single instance, holds long-lived LISTEN connections — do NOT scale horizontally
+# without first adding cross-instance job locking semantics.
+
+app = "aca-byo-deployer"
+primary_region = "ams"
+kill_signal = "SIGINT"
+kill_timeout = "30s"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8080"
+  NODE_ENV = "production"
+  LOG_LEVEL = "info"
+  # Service identity advertised in agent webhook signatures
+  DEPLOYER_NAME = "aca-byo-deployer"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = false       # must stay up for LISTEN
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
+    method = "get"
+    path = "/health"
+    protocol = "http"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512

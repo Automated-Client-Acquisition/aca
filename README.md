@@ -210,17 +210,26 @@ curl https://api.automatedclientacquisition.com/v1/lists \
 
 ### Self-hosting
 
-The install guide ships with the code. Watch this repo to get it. What you'll need:
+Clone, create the database from one baseline migration, deploy the edge functions, then start the
+app and the background workers with Docker Compose. The full guide is
+[docs/SELF_HOSTING.md](docs/SELF_HOSTING.md). You'll need:
 
-- Node.js (we build on 22)
-- A Supabase project, on Supabase Cloud or self-hosted with Docker, and the Supabase CLI
-- Docker or a Fly.io account for the background workers (sending, inbox sync, warmup)
+- Node.js 22, Docker and the Supabase CLI
+- A Supabase project, on Supabase Cloud or self-hosted with Docker
+- A machine with Docker (or a Fly.io account) for the workers: sending, inbox sync, rendering
 - Your own provider keys: an AI provider such as OpenRouter, and a Unipile account for LinkedIn,
   WhatsApp and Telegram
 - A domain for the app
 
-Setup will be: clone, create the database from one baseline migration, then start the app and
-workers with Docker Compose.
+```bash
+git clone https://github.com/seguelaCedric/aca.git && cd aca
+npm ci && cp .env.example .env
+supabase link --project-ref <ref> && supabase db push
+docker compose --profile outreach up -d
+```
+
+Self-hosting is supported by the community, through GitHub discussions and issues. ACA Cloud
+includes support from the team. Before you send, read the [acceptable use policy](ACCEPTABLE_USE.md).
 
 ### ACA Network
 
@@ -229,6 +238,12 @@ Some things can't be self-hosted because they rely on shared infrastructure: the
 365 tenants. A self-hosted install uses them through the
 [ACA Network API](https://www.automatedclientacquisition.com/developers) with an approved account:
 bring your own mailboxes into warmup today, with tenant and mailbox ordering next.
+
+## Contributing
+
+Issues and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) first; your first pull
+request asks you to sign the [CLA](CLA.md). Report security problems privately, as described in
+[SECURITY.md](SECURITY.md).
 
 ## License
 

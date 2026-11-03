@@ -1,0 +1,725 @@
+project_id = "aca"
+
+# Public branding endpoint (no JWT - called without auth via Vercel rewrite)
+[functions.get-branding-config]
+verify_jwt = false
+
+[functions.m365-consent-callback]
+verify_jwt = false
+
+# Internal/admin task: enriches the public /signals decision-maker teaser.
+# Gated by the optional SIGNAL_ENRICH_SECRET header rather than a user JWT.
+[functions.enrich-signal-people]
+verify_jwt = false
+
+# Push entrypoint for the DB-driven public /signals feed (CLI + scraper).
+# Gated in-function by org membership (user JWT) or the x-signals-push-secret
+# header, so the platform JWT gate is disabled here.
+[functions.push-public-signal]
+verify_jwt = false
+
+[functions.trigger-scrape]
+verify_jwt = true
+
+[functions.apify-webhook]
+verify_jwt = false
+
+# PostShiba catch-all inbox webhook: PostShiba can't send a Supabase JWT.
+# Authenticated in-function by the inbox's HMAC signature (X-Capsule-Signature).
+[functions.postshiba-inbound]
+verify_jwt = false
+
+# PostShiba delivery events (bounce, complaint, delivered): same signature scheme,
+# keyed by the connection's events webhook secret.
+[functions.postshiba-events]
+verify_jwt = false
+
+[functions.execute-schedules]
+verify_jwt = false
+
+[functions.fetch-youtube-channel]
+verify_jwt = true
+
+[functions.validate-api-key]
+verify_jwt = true
+
+[functions.validate-storage]
+verify_jwt = true
+
+[functions.convert-content-to-idea]
+verify_jwt = true
+
+[functions.scrape-and-analyze-product]
+verify_jwt = true
+
+[functions.generate-content-angles]
+verify_jwt = true
+
+[functions.test-blueprint]
+verify_jwt = true
+
+[functions.dispatch-generation-job]
+verify_jwt = false
+
+# BYO health/events agent — auth via X-ACA-Signature HMAC, not JWT
+[functions.infra-byo-events]
+verify_jwt = false
+
+[functions.generation-completion-webhook]
+verify_jwt = false
+
+[functions.fetch-replicate-models]
+verify_jwt = true
+
+
+[functions.fetch-elevenlabs-models]
+verify_jwt = true
+
+
+[functions.get-ai-models]
+verify_jwt = false
+
+
+
+[functions.test-replicate-call]
+verify_jwt = true
+
+[functions.fetch-elevenlabs-voices]
+verify_jwt = true
+
+[functions.recheck-api-key]
+verify_jwt = true
+
+[functions.abort-scrape]
+verify_jwt = true
+
+[functions.generate-content-idea]
+verify_jwt = true
+
+[functions.generate-image]
+verify_jwt = true
+
+[functions.regenerate-content]
+verify_jwt = true
+
+[functions.ghl-oauth-init]
+verify_jwt = true
+
+[functions.oauth-callback]
+verify_jwt = false
+
+[functions.ghl-refresh-token]
+verify_jwt = false
+
+[functions.fetch-ghl-accounts]
+verify_jwt = true
+
+[functions.disconnect-ghl]
+verify_jwt = true
+
+[functions.push-to-ghl]
+verify_jwt = true
+
+# Gated in-function by _shared/org-access.ts: the service key (process-publish-queue)
+# or a user JWT / aca_ token whose caller belongs to the twitter account's org.
+[functions.publish-to-twitter]
+verify_jwt = false
+
+# Gated in-function by _shared/org-access.ts, like publish-to-twitter.
+[functions.publish-to-linkedin]
+verify_jwt = false
+
+# Gated in-function by _shared/org-access.ts: the service key, or a user JWT / aca_
+# token whose caller can access body.organization_id. Stays verify_jwt=false so aca_
+# API tokens (not JWTs) keep working.
+[functions.submit-content]
+verify_jwt = false
+
+[functions.execute-stage]
+verify_jwt = false
+
+[functions.approve-stage]
+verify_jwt = true
+
+[functions.assemble-video]
+verify_jwt = false
+
+[functions.complete-generation-job]
+verify_jwt = false
+
+[functions.check-prediction-status]
+verify_jwt = true
+
+[functions.manual-clip-recovery]
+verify_jwt = true
+
+[functions.generate-video-caption]
+verify_jwt = true
+
+[functions.mcp]
+verify_jwt = false
+
+# OAuth is validated inside these functions. The platform's JWT gate cannot
+# validate opaque ACA connector tokens or browser authorization requests.
+[functions.mcp-oauth]
+verify_jwt = false
+
+[functions.mcp-v1]
+verify_jwt = false
+
+[functions.mcp-well-known]
+verify_jwt = false
+
+[functions.mcp-registry-auth]
+verify_jwt = false
+
+[functions.lead-magnet-gate]
+verify_jwt = false
+
+[functions.email-track-open]
+verify_jwt = false
+
+[functions.email-track-click]
+verify_jwt = false
+
+[functions.email-unsubscribe]
+verify_jwt = false
+
+# Daily buying-signals digest unsubscribe — hit by browsers / email one-click, no JWT
+[functions.signals-unsubscribe]
+verify_jwt = false
+
+# Unipile external callbacks (no JWT - called by Unipile servers)
+[functions.unipile-auth-callback]
+verify_jwt = false
+
+[functions.unipile-webhook-handler]
+verify_jwt = false
+
+# Unipile v2: hosted-auth redirect (browser, state-checked) and webhook (unipile-signature HMAC)
+[functions.unipile-v2-auth-callback]
+verify_jwt = false
+
+[functions.unipile-v2-webhook]
+verify_jwt = false
+
+# Manual conversation-autopilot trigger — does its own auth (JWT or aca_ CLI token)
+# + org-membership check via _shared/cli-auth.ts, so the platform JWT gate is disabled
+# to allow CLI/API-token callers. Without this it defaults to verify_jwt=true and
+# rejects aca_ tokens at the gateway with "401 Invalid JWT".
+[functions.inbox-autopilot-trigger]
+verify_jwt = false
+
+# Calendar external callback (no JWT - called by Unipile servers)
+[functions.calendar-auth-callback]
+verify_jwt = false
+
+# HeyGen external callback (no JWT - called by HeyGen servers, verified via Signature header)
+[functions.heygen-webhook]
+verify_jwt = false
+
+# Microsoft Graph mail-change webhook (no JWT - called by Graph servers).
+# Authenticity is Graph's own clientState echo, checked in-function, plus the
+# validationToken handshake at subscription creation — neither is a JWT.
+[functions.graph-mail-webhook]
+verify_jwt = false
+
+# Admin/cron-invoked; auth is the x-internal-secret header (shared with
+# aca-imap-poller's own internal endpoints), not a user JWT.
+[functions.infra-graph-subscription-sync]
+verify_jwt = false
+
+# One-off diagnostic for the Graph webhook pilot; auth is x-internal-secret,
+# same as the other infra-*/debug-* internal-only functions above.
+[functions.debug-send-graph-test-email]
+verify_jwt = false
+
+[functions.debug-search-graph-mailbox]
+verify_jwt = false
+
+# Download proxy (no JWT - called via direct <a> tag click, no auth headers)
+[functions.download-proxy]
+verify_jwt = false
+
+[functions.upload-media]
+verify_jwt = true
+
+[functions.backfill-campaign-inbox]
+verify_jwt = false
+
+# Local daily signal ingest. Auth is the X-ACA-Signal-Ingest-Secret header.
+[functions.public-linkedin-signals-ingest]
+verify_jwt = false
+
+# Cron-invoked followup checkers (no JWT - called by pg_cron)
+[functions.email-followup-checker]
+verify_jwt = false
+
+[functions.lead-magnet-followup-checker]
+verify_jwt = false
+
+# Cron-invoked queue processors (no JWT - called by pg_cron)
+[functions.crm-process-message-queue]
+verify_jwt = false
+
+[functions.process-autopilot-queue]
+verify_jwt = false
+
+# Authenticated in-function by user membership, service role, or CRON_SECRET.
+[functions.process-lead-list-processing]
+verify_jwt = false
+
+# Cron-authenticated in-function with x-cron-secret from Vault.
+[functions.moltsets-daily-enrichment-tick]
+verify_jwt = false
+
+# Authenticated in-function by service role, user JWT, or ACA CLI token.
+[functions.enroll-leads]
+verify_jwt = false
+
+# Authenticated in-function (cli-auth: user JWT or ACA CLI token). Gateway JWT
+# check disabled so non-JWT aca_ tokens reach the function.
+[functions.bulk-create-contacts]
+verify_jwt = false
+
+# Public REST API (/v1/*). Every one of these authenticates in-function via
+# _shared/cli-auth.ts, which accepts EITHER a Supabase JWT or an `aca_` API
+# token. The platform JWT gate has to be off or it rejects `aca_` tokens before
+# the function ever runs — the token is not a JWT, so the gateway 401s with
+# UNAUTHORIZED_INVALID_JWT_FORMAT and in-function auth never gets a say.
+[functions.api-contacts]
+verify_jwt = false
+
+[functions.api-lists]
+verify_jwt = false
+
+[functions.api-network]
+verify_jwt = false
+
+# Mandatory: an `aca_` token is not a JWT, so the platform gateway would reject
+# it before this function ever runs.
+[functions.api-signals]
+verify_jwt = false
+
+[functions.api-sequences]
+verify_jwt = false
+
+[functions.api-enrollments]
+verify_jwt = false
+
+[functions.api-conversations]
+verify_jwt = false
+
+[functions.api-custom-fields]
+verify_jwt = false
+
+[functions.api-company-analysis]
+verify_jwt = false
+
+[functions.api-pool]
+verify_jwt = false
+
+[functions.api-webhooks]
+verify_jwt = false
+
+[functions.bulk-add-to-list]
+verify_jwt = false
+
+[functions.crm-send-message]
+verify_jwt = false
+
+# /v1/hooks/n8n. This was missing, which meant the endpoint was unreachable by
+# its own documented auth: an `x-webhook-secret` request carries no Authorization
+# header at all, so the gateway rejected it with UNAUTHORIZED_NO_AUTH_HEADER
+# before the function ran. An `aca_` token fares no better — it is not a JWT.
+# Authentication happens in-function (API token or webhook secret, one required).
+[functions.crm-n8n-response]
+verify_jwt = false
+
+# Same: cli-auth (user JWT or ACA CLI token) plus a service-role path for the
+# MCP server. Gateway JWT check disabled so non-JWT aca_ tokens reach it.
+[functions.duplicate-email-sequence]
+verify_jwt = false
+
+# Delivery reconciliation. Authenticated in-function by x-cron-secret (Vault
+# cron_secret), service role, or org member. Gateway JWT check disabled so the
+# pg_cron job can reach it.
+[functions.email-delivery-reconcile]
+verify_jwt = false
+
+# Public contact form on the cold-email domain landing pages (outbound-sites/).
+# Gateway JWT check disabled because the caller is a server-side Next.js route,
+# not a signed-in user. The function authenticates it with the shared secret in
+# SITE_LEAD_SHARED_SECRET and refuses to run at all if that secret is unset.
+[functions.submit-site-lead]
+verify_jwt = false
+
+[functions.classify-company]
+verify_jwt = false
+
+# Read-only pool vitals. Authenticated in-function via cli-auth (user JWT or
+# aca_ token), so the gateway JWT gate must be off for token callers.
+[functions.pool-stats]
+verify_jwt = false
+
+# Writes verified attributes into the pool DuckDB projection. cli-auth in-function.
+[functions.pool-apply-verified]
+verify_jwt = false
+
+# Demand-driven MoltSets enrichment drain. Cron-invoked; authenticates
+# in-function via x-cron-secret or service role, so the gateway JWT gate is off.
+[functions.pool-enrich-tick]
+verify_jwt = false
+
+# Bulk website-classification drain. Cron-invoked; in-function auth.
+[functions.pool-classify-tick]
+verify_jwt = false
+
+# Stripe calls this with a signature header, never a Supabase JWT. Deploying it
+# without this entry (or without --no-verify-jwt) makes the gateway 401 every
+# Stripe event before the handler runs — payments stop reconciling silently.
+[functions.stripe-webhook]
+verify_jwt = false
+
+# Exchanges an `aca_` CLI token for a real Supabase session JWT so aca-cli can
+# call PostgREST directly (PostgREST itself, not just the platform gateway,
+# rejects any Authorization bearer that isn't a signed JWT — an aca_ token
+# never worked there even with verify_jwt on other functions disabled).
+[functions.cli-token-exchange]
+verify_jwt = false
+
+# Replicate Whisper callback for scraped-content transcripts. Replicate can't
+# send a JWT; the handler re-fetches the prediction with the org's own key.
+[functions.scraped-transcript-webhook]
+verify_jwt = false
+
+# Campaign entry uses organization-scoped JWT/ACA-token auth inside the handler.
+[functions.campaign-trigger-events]
+verify_jwt = false
+
+# The worker accepts only the internal service-role bearer.
+[functions.campaign-trigger-worker]
+verify_jwt = false
+
+# Called by the sdr-score skill with an aca_ CLI token, which the gateway's JWT
+# check would reject. assertOrgAccess in the handler does the auth.
+[functions.ai-sdr-run]
+verify_jwt = false
+
+# Twilio signs requests with X-Twilio-Signature (checked in the function); it sends no JWT.
+[functions.twilio-webhook]
+verify_jwt = false
+
+# Public: invites a GitHub user to the org from /access-cedric-github
+[functions.github-org-invite]
+verify_jwt = false
+
+# OpenRouter video job callback. Auth is the per-row token in the URL
+# (sha256 vs video_generations.callback_token_hash), not a Supabase JWT.
+[functions.openrouter-video-webhook]
+verify_jwt = false
+
+# Cron fallback for lost OpenRouter video webhooks. Gated by x-cron-secret.
+[functions.openrouter-video-poll]
+verify_jwt = false
+
+# Deployed with verify_jwt = false in production: they check their own auth
+# (CLI tokens, cron or webhook secrets, the MCP OAuth flow) or are public
+# endpoints. Listed here so `supabase functions deploy` keeps it that way.
+
+[functions.analyze-companies-batch]
+verify_jwt = false
+
+[functions.apify-leads-webhook]
+verify_jwt = false
+
+[functions.approve-and-push-sequence]
+verify_jwt = false
+
+[functions.approve-clip-item]
+verify_jwt = false
+
+[functions.approve-scene-item]
+verify_jwt = false
+
+[functions.autoblog-orchestrator]
+verify_jwt = false
+
+[functions.backfill-avatars]
+verify_jwt = false
+
+[functions.backfill-list-members]
+verify_jwt = false
+
+[functions.backfill-signal-countries]
+verify_jwt = false
+
+[functions.batch-generate-notion-pages]
+verify_jwt = false
+
+[functions.bulk-delete-contacts]
+verify_jwt = false
+
+[functions.calendar-connect]
+verify_jwt = false
+
+[functions.calendar-create-event]
+verify_jwt = false
+
+[functions.calendar-list-calendars]
+verify_jwt = false
+
+[functions.campaign-recover-orphaned-connections]
+verify_jwt = false
+
+[functions.campaign-test-contact]
+verify_jwt = false
+
+[functions.check-enrollment-conflicts]
+verify_jwt = false
+
+[functions.check-seg-status]
+verify_jwt = false
+
+[functions.cli-auth-issue]
+verify_jwt = false
+
+[functions.cli-auth-list]
+verify_jwt = false
+
+[functions.cli-auth-revoke]
+verify_jwt = false
+
+[functions.community-signup]
+verify_jwt = false
+
+[functions.create-client-organization]
+verify_jwt = false
+
+[functions.create-community-account]
+verify_jwt = false
+
+[functions.create-stage-branch]
+verify_jwt = false
+
+[functions.delete-from-instantly]
+verify_jwt = false
+
+[functions.delete-from-smartlead]
+verify_jwt = false
+
+[functions.delete-from-successai]
+verify_jwt = false
+
+[functions.delete-notion-pages]
+verify_jwt = false
+
+[functions.editor-generate-media]
+verify_jwt = false
+
+[functions.email-domain-health-probe]
+verify_jwt = false
+
+[functions.email-stats-aggregate]
+verify_jwt = false
+
+[functions.email-tool-connect]
+verify_jwt = false
+
+[functions.evaluate-rules]
+verify_jwt = false
+
+[functions.execute-handoff-actions]
+verify_jwt = false
+
+[functions.execute-parallel-stages]
+verify_jwt = false
+
+[functions.fetch-wordpress-taxonomies]
+verify_jwt = false
+
+[functions.fix-list-membership]
+verify_jwt = false
+
+[functions.generate-music]
+verify_jwt = false
+
+[functions.generate-sound-effect]
+verify_jwt = false
+
+[functions.ghl-book-appointment]
+verify_jwt = false
+
+[functions.ghl-delete-appointment]
+verify_jwt = false
+
+[functions.ghl-free-slots]
+verify_jwt = false
+
+[functions.ghl-list-calendars]
+verify_jwt = false
+
+[functions.ghl-list-custom-fields]
+verify_jwt = false
+
+[functions.ghl-update-appointment]
+verify_jwt = false
+
+[functions.google-indexing]
+verify_jwt = false
+
+[functions.heygen-manage-avatar]
+verify_jwt = false
+
+[functions.import-image-asset]
+verify_jwt = false
+
+[functions.infra-domain-config]
+verify_jwt = false
+
+[functions.infra-domain-move]
+verify_jwt = false
+
+[functions.infra-health-check]
+verify_jwt = false
+
+[functions.infra-m365-contact-alias]
+verify_jwt = false
+
+[functions.infra-subscription-connect]
+verify_jwt = false
+
+[functions.linkedin-event-import]
+verify_jwt = false
+
+[functions.linkedin-fetch-preview]
+verify_jwt = false
+
+[functions.linkedin-fetch-search-params]
+verify_jwt = false
+
+[functions.linkedin-sync-connections]
+verify_jwt = false
+
+[functions.list-building-domain-search]
+verify_jwt = false
+
+[functions.manage-custom-domain]
+verify_jwt = false
+
+[functions.notify-google-indexing]
+verify_jwt = false
+
+[functions.preview-page]
+verify_jwt = false
+
+[functions.process-company-analysis-job]
+verify_jwt = false
+
+[functions.process-email-sequence-job]
+verify_jwt = false
+
+[functions.process-evergreen]
+verify_jwt = false
+
+[functions.publish-to-wordpress]
+verify_jwt = false
+
+[functions.push-contact-to-ghl]
+verify_jwt = false
+
+[functions.push-to-instantly]
+verify_jwt = false
+
+[functions.push-to-leadconnector-email]
+verify_jwt = false
+
+[functions.push-to-smartlead]
+verify_jwt = false
+
+[functions.push-to-successai]
+verify_jwt = false
+
+[functions.push-to-zapmail]
+verify_jwt = false
+
+[functions.refresh-avatar]
+verify_jwt = false
+
+[functions.registrar-dns]
+verify_jwt = false
+
+[functions.render-subtitles]
+verify_jwt = false
+
+[functions.render-video-project]
+verify_jwt = false
+
+[functions.rollback-stage]
+verify_jwt = false
+
+[functions.save-onboarding-icps]
+verify_jwt = false
+
+[functions.search-stock-media]
+verify_jwt = false
+
+[functions.send-feedback]
+verify_jwt = false
+
+[functions.send-invitation]
+verify_jwt = false
+
+[functions.sync-openrouter-models]
+verify_jwt = false
+
+[functions.sync-skool-memberships]
+verify_jwt = false
+
+[functions.test-pipeline]
+verify_jwt = false
+
+[functions.test-storage-credentials]
+verify_jwt = false
+
+[functions.transcribe-audio]
+verify_jwt = false
+
+[functions.transcribe-video-editor]
+verify_jwt = false
+
+[functions.unipile-add-post]
+verify_jwt = false
+
+[functions.unipile-delete-account]
+verify_jwt = false
+
+[functions.unipile-engage-post]
+verify_jwt = false
+
+[functions.unipile-fetch-invitations]
+verify_jwt = false
+
+[functions.unipile-fetch-profile]
+verify_jwt = false
+
+[functions.unipile-fetch-user-activity]
+verify_jwt = false
+
+[functions.unipile-fetch-user-posts]
+verify_jwt = false
+
+[functions.unipile-send-invitation]
+verify_jwt = false
+
+[functions.validate-twitter]
+verify_jwt = false
+
+[functions.validate-wordpress]
+verify_jwt = false
+
+[functions.video-editor-tts]
+verify_jwt = false
+
+[functions.webhook-retry]
+verify_jwt = false

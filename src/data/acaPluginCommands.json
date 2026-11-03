@@ -1,0 +1,652 @@
+{
+  "generatedFrom": "seguelaCedric/aca-native-mcp-skills",
+  "groups": [
+    {
+      "group": "Start",
+      "commands": [
+        {
+          "command": "/aca-kickoff",
+          "summary": "set up the workspace and launch plan, step by step",
+          "description": "Guided start-here orchestrator for ACA.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "list_lead_lists",
+            "create_lead_list",
+            "add_contacts_to_list",
+            "bulk_create_contacts",
+            "list_campaigns",
+            "list_sequences"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/assets?tab=products",
+            "https://www.automatedclientacquisition.com/list-building",
+            "https://www.automatedclientacquisition.com/leads/import",
+            "https://www.automatedclientacquisition.com/accounts",
+            "https://www.automatedclientacquisition.com/email/mailboxes"
+          ]
+        },
+        {
+          "command": "/aca-icp-onboarding",
+          "summary": "define your offer and ideal customer",
+          "description": "Turn a rough buyer or offer description into a paste-ready offer and ICP to save in ACA.",
+          "tools": [
+            "get_started",
+            "get_workspace"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/assets?tab=products",
+            "https://www.automatedclientacquisition.com/assets?tab=icps",
+            "https://www.automatedclientacquisition.com/assets?tab=brands",
+            "https://www.automatedclientacquisition.com/assets?tab=strategies"
+          ]
+        },
+        {
+          "command": "/aca-pipeline-status",
+          "summary": "what's running, what's replying, what needs attention",
+          "description": "Get a read-only status report on everything running in ACA right now: active campaigns, replies waiting, email sequences, lead lists, lead magnets, and content generation jobs.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "list_campaigns",
+            "get_campaign",
+            "get_campaign_metrics",
+            "search_conversations",
+            "get_conversation",
+            "list_sequences",
+            "list_lead_lists",
+            "list_lead_magnets",
+            "list_content_generation_jobs"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/campaigns/{id}",
+            "https://www.automatedclientacquisition.com/inbox",
+            "https://www.automatedclientacquisition.com/email/mailboxes",
+            "https://www.automatedclientacquisition.com/email/analytics",
+            "https://www.automatedclientacquisition.com/accounts",
+            "https://www.automatedclientacquisition.com/autopilots",
+            "https://www.automatedclientacquisition.com/publish-queue"
+          ]
+        },
+        {
+          "command": "/aca-weekly-rhythm",
+          "summary": "the weekly review of replies, results and next experiments",
+          "description": "Weekly ACA operating cadence for outbound and content.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "list_campaigns",
+            "get_campaign_metrics",
+            "search_conversations",
+            "list_sequences",
+            "list_lead_lists",
+            "list_lead_magnets",
+            "list_content_ideas",
+            "list_content_generation_jobs"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/campaigns/{id}",
+            "https://www.automatedclientacquisition.com/email/sequences",
+            "https://www.automatedclientacquisition.com/email/mailboxes",
+            "https://www.automatedclientacquisition.com/email/analytics",
+            "https://www.automatedclientacquisition.com/autopilots",
+            "https://www.automatedclientacquisition.com/publish-queue",
+            "https://www.automatedclientacquisition.com/assets?tab=strategies"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Find prospects",
+      "commands": [
+        {
+          "command": "/aca-find-leads",
+          "summary": "plan and build your first audience",
+          "description": "Plan and build a target list of leads in ACA.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "search_contacts",
+            "bulk_create_contacts",
+            "list_lead_lists",
+            "get_lead_list",
+            "create_lead_list",
+            "add_contacts_to_list"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/list-building",
+            "https://www.automatedclientacquisition.com/leads/import",
+            "https://www.automatedclientacquisition.com/leads/lists"
+          ]
+        },
+        {
+          "command": "/aca-lookalike-leads",
+          "summary": "find more people like your best customers",
+          "description": "Build lookalike lead lists in ACA from a winning customer, lead list, campaign, or contact segment.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "list_lead_lists",
+            "get_lead_list",
+            "search_contacts",
+            "get_contact",
+            "list_campaigns",
+            "get_campaign",
+            "get_campaign_metrics"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/list-building",
+            "https://www.automatedclientacquisition.com/leads/import"
+          ]
+        },
+        {
+          "command": "/aca-local-business-leads",
+          "summary": "local businesses by category and area",
+          "description": "Build local business lead lists in ACA by geography, vertical, SIC code, company keyword, size, and owner/manager seniority.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "list_lead_lists",
+            "get_lead_list",
+            "bulk_create_contacts"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/list-building",
+            "https://www.automatedclientacquisition.com/leads/import"
+          ]
+        },
+        {
+          "command": "/aca-competitor-engagers",
+          "summary": "people engaging with competitors' content",
+          "description": "Source prospects around competitors, alternatives, and category keywords using ACA-native lead sources.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "list_lead_lists",
+            "get_lead_list",
+            "search_contacts"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/leads/import",
+            "https://www.automatedclientacquisition.com/list-building"
+          ]
+        },
+        {
+          "command": "/aca-domain-list-builder",
+          "summary": "build lists from company domains",
+          "description": "Build ACA account and contact lists from company domains, company keywords, or account constraints.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "search_contacts",
+            "get_contact",
+            "bulk_create_contacts",
+            "list_lead_lists",
+            "get_lead_list",
+            "create_lead_list",
+            "add_contacts_to_list"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/list-building",
+            "https://www.automatedclientacquisition.com/leads/import"
+          ]
+        },
+        {
+          "command": "/aca-lead-quality",
+          "summary": "clean, score and segment a list",
+          "description": "Grade, clean, and segment ACA lead lists before outreach.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "list_lead_lists",
+            "get_lead_list",
+            "create_lead_list",
+            "add_contacts_to_list",
+            "search_contacts",
+            "get_contact",
+            "update_contact",
+            "update_contact_stage",
+            "list_tags"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/contacts/{id}",
+            "https://www.automatedclientacquisition.com/leads/lists",
+            "https://www.automatedclientacquisition.com/leads/import",
+            "https://www.automatedclientacquisition.com/campaigns/{id}"
+          ]
+        },
+        {
+          "command": "/aca-auto-research",
+          "summary": "scan the workspace and find the next best action",
+          "description": "Autonomous ACA research loop for finding the next best action.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "list_lead_lists",
+            "list_campaigns",
+            "get_campaign_metrics",
+            "list_sequences",
+            "search_conversations",
+            "list_lead_magnets",
+            "list_content_ideas",
+            "list_content_generation_jobs"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/accounts",
+            "https://www.automatedclientacquisition.com/email/mailboxes",
+            "https://www.automatedclientacquisition.com/email/analytics",
+            "https://www.automatedclientacquisition.com/assets?tab=strategies"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Outreach",
+      "commands": [
+        {
+          "command": "/aca-launch-outreach",
+          "summary": "from lead list to a campaign draft ready to activate",
+          "description": "Plan and set up a LinkedIn or email outreach campaign in ACA.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "list_lead_lists",
+            "get_lead_list",
+            "get_contact",
+            "list_sequences",
+            "list_campaigns",
+            "get_campaign",
+            "create_linkedin_campaign_draft",
+            "list_connected_accounts"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/campaigns/{campaign_id}",
+            "https://www.automatedclientacquisition.com/email/sequences",
+            "https://www.automatedclientacquisition.com/accounts",
+            "https://www.automatedclientacquisition.com/email/mailboxes",
+            "https://www.automatedclientacquisition.com/assets?tab=products"
+          ]
+        },
+        {
+          "command": "/aca-campaign-strategy",
+          "summary": "pick the angle, channel mix and cadence",
+          "description": "Design an ACA campaign strategy before copy or launch.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "list_lead_lists",
+            "list_campaigns",
+            "get_campaign_metrics",
+            "list_sequences"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/assets?tab=strategies",
+            "https://www.automatedclientacquisition.com/assets?tab=products",
+            "https://www.automatedclientacquisition.com/campaigns/{campaign_id}"
+          ]
+        },
+        {
+          "command": "/aca-campaign-copywriting",
+          "summary": "write the sequence",
+          "description": "Write ACA outbound campaign copy for LinkedIn, email, WhatsApp, and multi-channel sequences.",
+          "tools": [
+            "get_started",
+            "list_campaigns",
+            "get_campaign",
+            "list_sequences",
+            "get_sequence",
+            "get_contact"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/campaigns/{campaign_id}",
+            "https://www.automatedclientacquisition.com/email/sequences",
+            "https://www.automatedclientacquisition.com/assets?tab=strategies"
+          ]
+        },
+        {
+          "command": "/aca-copy-variants",
+          "summary": "A/B variants of a message",
+          "description": "Create controlled ACA copy variants for outbound experiments.",
+          "tools": [
+            "list_campaigns",
+            "get_campaign",
+            "get_campaign_metrics",
+            "list_sequences",
+            "get_sequence",
+            "get_lead_list"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/campaigns/{campaign_id}",
+            "https://www.automatedclientacquisition.com/email/sequences",
+            "https://www.automatedclientacquisition.com/assets?tab=strategies"
+          ]
+        },
+        {
+          "command": "/aca-personalization-pattern",
+          "summary": "personalization that scales without sounding templated",
+          "description": "Apply ACA prompt-mode personalization patterns to outbound campaigns.",
+          "tools": [
+            "list_campaigns",
+            "get_campaign",
+            "get_lead_list",
+            "get_contact",
+            "search_contacts"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/campaigns/{campaign_id}",
+            "https://www.automatedclientacquisition.com/assets?tab=strategies"
+          ]
+        },
+        {
+          "command": "/aca-copy-spam-checker",
+          "summary": "catch spam triggers before you send",
+          "description": "Review ACA email, LinkedIn, and campaign copy for spam risk, weak claims, fake personalization, compliance issues, and formatting problems.",
+          "tools": [
+            "list_campaigns",
+            "get_campaign",
+            "list_sequences",
+            "get_sequence",
+            "get_contact"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/campaigns/{campaign_id}",
+            "https://www.automatedclientacquisition.com/email/sequences",
+            "https://www.automatedclientacquisition.com/email/analytics"
+          ]
+        },
+        {
+          "command": "/aca-email-sequence-manager",
+          "summary": "review and improve existing sequences",
+          "description": "Plan, write, and review ACA email sequences.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "list_sequences",
+            "get_sequence",
+            "list_lead_lists",
+            "get_lead_list",
+            "create_lead_list",
+            "add_contacts_to_list",
+            "bulk_create_contacts",
+            "get_contact"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/email/sequences",
+            "https://www.automatedclientacquisition.com/email/mailboxes",
+            "https://www.automatedclientacquisition.com/email/analytics"
+          ]
+        },
+        {
+          "command": "/aca-experiment-design",
+          "summary": "set up a clean test",
+          "description": "Design one controlled ACA experiment for outbound or content.",
+          "tools": [
+            "get_started",
+            "list_campaigns",
+            "get_campaign_metrics",
+            "list_sequences",
+            "get_sequence",
+            "search_conversations",
+            "list_lead_lists",
+            "list_content_generation_jobs"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/email/sequences",
+            "https://www.automatedclientacquisition.com/campaigns/{id}",
+            "https://www.automatedclientacquisition.com/assets?tab=strategies"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Deliverability",
+      "commands": [
+        {
+          "command": "/aca-email-infra-readiness",
+          "summary": "domains, DNS and mailboxes ready to send",
+          "description": "Review ACA email infrastructure readiness.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "list_sequences",
+            "list_campaigns"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/email/mailboxes",
+            "https://www.automatedclientacquisition.com/email/analytics"
+          ]
+        },
+        {
+          "command": "/aca-email-deliverability-audit",
+          "summary": "full deliverability review",
+          "description": "Audit ACA cold email readiness before launch.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "list_sequences",
+            "get_sequence",
+            "list_campaigns",
+            "get_campaign",
+            "get_lead_list",
+            "search_contacts"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/email/mailboxes",
+            "https://www.automatedclientacquisition.com/email/analytics",
+            "https://www.automatedclientacquisition.com/email/sequences"
+          ]
+        },
+        {
+          "command": "/aca-deliverability-test",
+          "summary": "plan a small preflight send before you scale",
+          "description": "Plan a controlled ACA email preflight test.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "list_sequences",
+            "get_sequence",
+            "list_lead_lists",
+            "get_lead_list",
+            "create_lead_list",
+            "add_contacts_to_list",
+            "search_contacts",
+            "bulk_create_contacts",
+            "search_conversations",
+            "get_conversation"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/email/sequences",
+            "https://www.automatedclientacquisition.com/email/mailboxes",
+            "https://www.automatedclientacquisition.com/email/analytics"
+          ]
+        },
+        {
+          "command": "/aca-sender-health",
+          "summary": "mailbox and LinkedIn sender health",
+          "description": "Check ACA sender account and mailbox health.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "list_campaigns",
+            "get_campaign",
+            "get_campaign_metrics",
+            "list_sequences"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/accounts",
+            "https://www.automatedclientacquisition.com/email/mailboxes",
+            "https://www.automatedclientacquisition.com/email/analytics"
+          ]
+        },
+        {
+          "command": "/aca-deliverability-incident-response",
+          "summary": "what to do when sends land in spam or bounce",
+          "description": "Triage ACA email deliverability incidents.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "list_sequences",
+            "get_sequence",
+            "list_campaigns",
+            "get_campaign",
+            "get_campaign_metrics",
+            "search_conversations",
+            "get_conversation"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/email/analytics",
+            "https://www.automatedclientacquisition.com/email/mailboxes",
+            "https://www.automatedclientacquisition.com/email/sequences",
+            "https://www.automatedclientacquisition.com/campaigns/{id}",
+            "https://www.automatedclientacquisition.com/accounts",
+            "https://www.automatedclientacquisition.com/assets?tab=strategies"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Replies and content",
+      "commands": [
+        {
+          "command": "/aca-positive-reply-scoring",
+          "summary": "find and prioritize interested replies",
+          "description": "Review and score ACA campaign replies.",
+          "tools": [
+            "list_pipeline_stages",
+            "search_conversations",
+            "get_conversation",
+            "list_campaigns",
+            "get_campaign",
+            "get_contact",
+            "update_contact",
+            "update_contact_stage",
+            "list_tags"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/inbox",
+            "https://www.automatedclientacquisition.com/contacts/{id}",
+            "https://www.automatedclientacquisition.com/assets?tab=strategies"
+          ]
+        },
+        {
+          "command": "/aca-content-week",
+          "summary": "plan and generate a week of content",
+          "description": "Generate a week of on-brand content in ACA.",
+          "tools": [
+            "get_started",
+            "list_blueprints",
+            "get_blueprint",
+            "create_blueprint",
+            "list_content_ideas",
+            "create_content_ideas",
+            "start_content_generation",
+            "list_content_generation_jobs"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/blueprints/{id}",
+            "https://www.automatedclientacquisition.com/publish-queue",
+            "https://www.automatedclientacquisition.com/autopilots",
+            "https://www.automatedclientacquisition.com/assets?tab=brands"
+          ]
+        },
+        {
+          "command": "/aca-lead-magnet-brainstorm",
+          "summary": "lead magnet ideas and a comment-to-DM draft",
+          "description": "Brainstorm and prepare ACA lead magnet campaigns.",
+          "tools": [
+            "list_connected_accounts",
+            "get_started",
+            "list_lead_magnets",
+            "get_lead_magnet",
+            "create_lead_magnet_draft",
+            "list_agent_profiles",
+            "create_agent_profile"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/lead-magnets",
+            "https://www.automatedclientacquisition.com/accounts",
+            "https://www.automatedclientacquisition.com/assets?tab=products",
+            "https://www.automatedclientacquisition.com/assets?tab=knowledge"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "For agent builders",
+      "commands": [
+        {
+          "command": "/aca-mcp-ops",
+          "summary": "operating guide for agents using the ACA connector",
+          "description": "Operating guide for agents using the ACA connector.",
+          "tools": [
+            "get_started",
+            "get_workspace",
+            "list_connected_accounts",
+            "search_contacts",
+            "get_contact",
+            "create_contact",
+            "bulk_create_contacts",
+            "update_contact",
+            "list_pipeline_stages",
+            "update_contact_stage",
+            "list_tags",
+            "list_lead_lists",
+            "get_lead_list",
+            "create_lead_list",
+            "add_contacts_to_list",
+            "list_sequences",
+            "get_sequence",
+            "list_campaigns",
+            "get_campaign",
+            "get_campaign_metrics",
+            "create_linkedin_campaign_draft",
+            "search_conversations",
+            "get_conversation",
+            "list_content_ideas",
+            "create_content_ideas",
+            "list_blueprints",
+            "get_blueprint",
+            "create_blueprint",
+            "start_content_generation",
+            "list_content_generation_jobs",
+            "list_lead_magnets",
+            "get_lead_magnet",
+            "create_lead_magnet_draft",
+            "list_agent_profiles",
+            "create_agent_profile"
+          ],
+          "appPages": [
+            "https://www.automatedclientacquisition.com/assets?tab=products",
+            "https://www.automatedclientacquisition.com/list-building",
+            "https://www.automatedclientacquisition.com/leads/import",
+            "https://www.automatedclientacquisition.com/leads/lists",
+            "https://www.automatedclientacquisition.com/email/sequences",
+            "https://www.automatedclientacquisition.com/campaigns/{id}",
+            "https://www.automatedclientacquisition.com/inbox",
+            "https://www.automatedclientacquisition.com/accounts",
+            "https://www.automatedclientacquisition.com/email/mailboxes",
+            "https://www.automatedclientacquisition.com/email/analytics",
+            "https://www.automatedclientacquisition.com/blueprints/{id}",
+            "https://www.automatedclientacquisition.com/autopilots",
+            "https://www.automatedclientacquisition.com/publish-queue",
+            "https://www.automatedclientacquisition.com/lead-magnets"
+          ]
+        },
+        {
+          "command": "/aca-crew-roles",
+          "summary": "define each agent's job in a multi-agent sales crew",
+          "description": "Use this when creating, briefing, or reviewing specialized ACA sales-crew agent roles and their job boundaries.",
+          "tools": [],
+          "appPages": []
+        },
+        {
+          "command": "/aca-crew-handoff",
+          "summary": "move work between crew agents from signal to meeting",
+          "description": "Use this when coordinating the ACA multi-agent sales crew handoffs from signal to meeting.",
+          "tools": [],
+          "appPages": []
+        }
+      ]
+    }
+  ]
+}

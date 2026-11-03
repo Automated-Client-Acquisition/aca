@@ -1,0 +1,25 @@
+{
+  "name": "aca-carousel-renderer",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "render:test": "tsc && node dist/test-render.js",
+    "fonts": "node scripts/fetch-fonts.mjs",
+    "metrics": "python3 scripts/gen-text-metrics.py",
+    "textures": "python3 scripts/gen-textures.py",
+    "render:infographic": "tsc && node dist/infographic/test-render-infographic.js"
+  },
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "@supabase/supabase-js": "^2.81.1",
+    "satori": "^0.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0",
+    "tsx": "^4.19.0"
+  }
+}

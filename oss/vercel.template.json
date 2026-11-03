@@ -1,0 +1,634 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/v1/campaign-events",
+      "destination": "__SUPABASE_URL__/functions/v1/campaign-trigger-events"
+    },
+    {
+      "source": "/v1/campaign-events",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/campaign-trigger-events"
+    },
+    {
+      "source": "/v1/contacts",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-contacts"
+    },
+    {
+      "source": "/v1/contacts/:id",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-contacts?id=:id"
+    },
+    {
+      "source": "/v1/signals",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-signals"
+    },
+    {
+      "source": "/v1/lists/members",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-lists?resource=members"
+    },
+    {
+      "source": "/v1/lists",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-lists"
+    },
+    {
+      "source": "/v1/lists/:id",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-lists?id=:id"
+    },
+    {
+      "source": "/v1/network/mailboxes/connect",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-network?resource=mailboxes&action=connect"
+    },
+    {
+      "source": "/v1/network/mailboxes/:id/warmup",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-network?resource=mailbox_warmup&id=:id"
+    },
+    {
+      "source": "/v1/network/mailboxes",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-network?resource=mailboxes"
+    },
+    {
+      "source": "/v1/network/mailboxes/:id",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-network?resource=mailboxes&id=:id"
+    },
+    {
+      "source": "/v1/companies/analysis",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-company-analysis"
+    },
+    {
+      "source": "/v1/custom-fields",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-custom-fields"
+    },
+    {
+      "source": "/v1/sequences",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-sequences"
+    },
+    {
+      "source": "/v1/sequences/:id",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-sequences?id=:id"
+    },
+    {
+      "source": "/v1/conversations",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-conversations"
+    },
+    {
+      "source": "/v1/conversations/:id/messages",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-conversations?id=:id&resource=messages"
+    },
+    {
+      "source": "/v1/conversations/:id",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-conversations?id=:id"
+    },
+    {
+      "source": "/v1/enrollments",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-enrollments"
+    },
+    {
+      "source": "/v1/enrollments/:id",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-enrollments?id=:id"
+    },
+    {
+      "source": "/v1/webhooks",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-webhooks"
+    },
+    {
+      "source": "/v1/webhooks/:id",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-webhooks?id=:id"
+    },
+    {
+      "source": "/v1/pool/search",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-pool?resource=search"
+    },
+    {
+      "source": "/v1/pool/lists",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-pool?resource=lists"
+    },
+    {
+      "source": "/v1/pool/jobs/:id",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-pool?resource=jobs&id=:id"
+    },
+    {
+      "source": "/v1/pool/exports",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-pool?resource=exports"
+    },
+    {
+      "source": "/v1/pool/exports/:id",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/api-pool?resource=exports&id=:id"
+    },
+    {
+      "source": "/v1/messages",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/crm-send-message"
+    },
+    {
+      "source": "/v1/mcp",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/mcp"
+    },
+    {
+      "source": "/mcp",
+      "has": [
+        {
+          "type": "host",
+          "value": "__MCP_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/mcp-v1"
+    },
+    {
+      "source": "/.well-known/oauth-protected-resource",
+      "has": [
+        {
+          "type": "host",
+          "value": "__MCP_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/mcp-oauth?op=protected-resource"
+    },
+    {
+      "source": "/.well-known/oauth-protected-resource/:resourcePath*",
+      "has": [
+        {
+          "type": "host",
+          "value": "__MCP_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/mcp-oauth?op=protected-resource"
+    },
+    {
+      "source": "/.well-known/oauth-protected-resource/mcp/",
+      "has": [
+        {
+          "type": "host",
+          "value": "__MCP_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/mcp-oauth?op=protected-resource"
+    },
+    {
+      "source": "/.well-known/openai-apps-challenge",
+      "has": [
+        {
+          "type": "host",
+          "value": "__MCP_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/mcp-oauth?op=openai-challenge"
+    },
+    {
+      "source": "/.well-known/oauth-authorization-server",
+      "has": [
+        {
+          "type": "host",
+          "value": "__MCP_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/mcp-oauth?op=metadata"
+    },
+    {
+      "source": "/.well-known/oauth-authorization-server/:issuerPath*",
+      "has": [
+        {
+          "type": "host",
+          "value": "__MCP_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/mcp-oauth?op=metadata"
+    },
+    {
+      "source": "/.well-known/oauth-authorization-server/oauth/",
+      "has": [
+        {
+          "type": "host",
+          "value": "__MCP_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/mcp-oauth?op=metadata"
+    },
+    {
+      "source": "/oauth",
+      "has": [
+        {
+          "type": "host",
+          "value": "__MCP_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/mcp-oauth?op=metadata"
+    },
+    {
+      "source": "/oauth/authorize",
+      "has": [
+        {
+          "type": "host",
+          "value": "__MCP_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/mcp-oauth?op=authorize"
+    },
+    {
+      "source": "/oauth/token",
+      "has": [
+        {
+          "type": "host",
+          "value": "__MCP_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/mcp-oauth?op=token"
+    },
+    {
+      "source": "/oauth/revoke",
+      "has": [
+        {
+          "type": "host",
+          "value": "__MCP_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/mcp-oauth?op=revoke"
+    },
+    {
+      "source": "/oauth/register",
+      "has": [
+        {
+          "type": "host",
+          "value": "__MCP_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/mcp-oauth?op=register"
+    },
+    {
+      "source": "/v1/hooks/n8n",
+      "has": [
+        {
+          "type": "host",
+          "value": "__API_HOST__"
+        }
+      ],
+      "destination": "__SUPABASE_URL__/functions/v1/crm-n8n-response"
+    },
+    {
+      "source": "/api/v1/contacts",
+      "destination": "__SUPABASE_URL__/functions/v1/api-contacts"
+    },
+    {
+      "source": "/api/v1/contacts/:id",
+      "destination": "__SUPABASE_URL__/functions/v1/api-contacts?id=:id"
+    },
+    {
+      "source": "/api/v1/signals",
+      "destination": "__SUPABASE_URL__/functions/v1/api-signals"
+    },
+    {
+      "source": "/api/v1/lists/members",
+      "destination": "__SUPABASE_URL__/functions/v1/api-lists?resource=members"
+    },
+    {
+      "source": "/api/v1/lists",
+      "destination": "__SUPABASE_URL__/functions/v1/api-lists"
+    },
+    {
+      "source": "/api/v1/lists/:id",
+      "destination": "__SUPABASE_URL__/functions/v1/api-lists?id=:id"
+    },
+    {
+      "source": "/api/v1/custom-fields",
+      "destination": "__SUPABASE_URL__/functions/v1/api-custom-fields"
+    },
+    {
+      "source": "/api/v1/sequences",
+      "destination": "__SUPABASE_URL__/functions/v1/api-sequences"
+    },
+    {
+      "source": "/api/v1/sequences/:id",
+      "destination": "__SUPABASE_URL__/functions/v1/api-sequences?id=:id"
+    },
+    {
+      "source": "/api/v1/conversations",
+      "destination": "__SUPABASE_URL__/functions/v1/api-conversations"
+    },
+    {
+      "source": "/api/v1/conversations/:id/messages",
+      "destination": "__SUPABASE_URL__/functions/v1/api-conversations?id=:id&resource=messages"
+    },
+    {
+      "source": "/api/v1/conversations/:id",
+      "destination": "__SUPABASE_URL__/functions/v1/api-conversations?id=:id"
+    },
+    {
+      "source": "/api/v1/enrollments",
+      "destination": "__SUPABASE_URL__/functions/v1/api-enrollments"
+    },
+    {
+      "source": "/api/v1/enrollments/:id",
+      "destination": "__SUPABASE_URL__/functions/v1/api-enrollments?id=:id"
+    },
+    {
+      "source": "/api/v1/webhooks",
+      "destination": "__SUPABASE_URL__/functions/v1/api-webhooks"
+    },
+    {
+      "source": "/api/v1/webhooks/:id",
+      "destination": "__SUPABASE_URL__/functions/v1/api-webhooks?id=:id"
+    },
+    {
+      "source": "/api/v1/pool/search",
+      "destination": "__SUPABASE_URL__/functions/v1/api-pool?resource=search"
+    },
+    {
+      "source": "/api/v1/pool/lists",
+      "destination": "__SUPABASE_URL__/functions/v1/api-pool?resource=lists"
+    },
+    {
+      "source": "/api/v1/pool/jobs/:id",
+      "destination": "__SUPABASE_URL__/functions/v1/api-pool?resource=jobs&id=:id"
+    },
+    {
+      "source": "/api/v1/pool/exports",
+      "destination": "__SUPABASE_URL__/functions/v1/api-pool?resource=exports"
+    },
+    {
+      "source": "/api/v1/pool/exports/:id",
+      "destination": "__SUPABASE_URL__/functions/v1/api-pool?resource=exports&id=:id"
+    },
+    {
+      "source": "/api/v1/messages",
+      "destination": "__SUPABASE_URL__/functions/v1/crm-send-message"
+    },
+    {
+      "source": "/api/v1/hooks/n8n",
+      "destination": "__SUPABASE_URL__/functions/v1/crm-n8n-response"
+    },
+    {
+      "source": "/.well-known/mcp",
+      "destination": "__SUPABASE_URL__/functions/v1/mcp-well-known"
+    },
+    {
+      "source": "/.well-known/mcp-registry-auth",
+      "destination": "__SUPABASE_URL__/functions/v1/mcp-registry-auth"
+    },
+    {
+      "source": "/api/mcp",
+      "destination": "__SUPABASE_URL__/functions/v1/mcp"
+    },
+    {
+      "source": "/api/branding",
+      "destination": "__SUPABASE_URL__/functions/v1/get-branding-config"
+    },
+    {
+      "source": "/api(/.*)?",
+      "destination": {
+        "type": "service",
+        "service": "byo-deployer"
+      }
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "type": "service",
+        "service": "frontend"
+      }
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'self'"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin-allow-popups"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
+    {
+      "source": "/media/world/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/media/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        }
+      ]
+    },
+    {
+      "source": "/api/branding",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=300, stale-while-revalidate=600"
+        }
+      ]
+    }
+  ],
+  "services": {
+    "frontend": {
+      "root": ".",
+      "framework": "vite",
+      "rewrites": [
+        {
+          "source": "/(.*)",
+          "destination": "/app-shell.html"
+        }
+      ]
+    },
+    "byo-deployer": {
+      "root": "services/byo-deployer",
+      "entrypoint": "src/server.ts"
+    }
+  }
+}

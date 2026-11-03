@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security issue
+    url: https://github.com/seguelaCedric/aca/security/advisories/new
+    about: Report vulnerabilities privately, not as an issue.
+  - name: Questions and self-hosting help
+    url: https://github.com/seguelaCedric/aca/discussions
+    about: Ask the community. Self-hosting is supported here.
+  - name: ACA Cloud support
+    url: https://www.automatedclientacquisition.com/support
+    about: Customers of the hosted version get support from the team.

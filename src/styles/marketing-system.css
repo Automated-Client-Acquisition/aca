@@ -1,0 +1,545 @@
+/* Public marketing foundations. Deliberately scoped away from the app and homepage. */
+.aca-marketing.mkt-page,
+.aca-marketing.mkt-chrome {
+  --bone: #fff9ef;
+  --paper: #f6f0e6;
+  --ink: #252523;
+  --ink-2: #424842;
+  --muted: #656b64;
+  --rule: #e1dfd6;
+  --mark: #dc6c47;
+  --accent: #dc6c47;
+  --accent-2: #f2c351;
+  --line: #e5e3da;
+  --line-mid: #d5d6ce;
+  --line-strong: #252523;
+  --surface: #fff9ef;
+  --card: #fff;
+  --font-serif: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --shadow-card: 0 3px 12px rgb(37 37 35 / 3%);
+  --shadow-lift: 0 8px 24px rgb(37 37 35 / 7%);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  background: var(--bone);
+}
+.aca-marketing.mkt-page {
+  min-width: 0;
+}
+.mkt-page .wrap {
+  max-width: 1376px;
+  padding-inline: 48px;
+}
+.mkt-page :is(h1, h2, h3, h4, .h-hero, .h-section, .h-card) {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  color: inherit;
+}
+.mkt-page :is(h1, .h-hero) {
+  font-size: clamp(40px, 4.6vw, 66px);
+  font-weight: 720;
+}
+.mkt-page :is(h2, .h-section) {
+  font-size: clamp(30px, 3.7vw, 48px);
+}
+.mkt-page :is(h3, .h-card) {
+  font-size: clamp(23px, 2vw, 28px);
+  letter-spacing: -0.025em;
+}
+.mkt-page :is(h1, h2, h3, h4) em {
+  font-family: inherit;
+  font-style: normal;
+}
+.mkt-page .lead {
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.mkt-page p {
+  line-height: 1.65;
+}
+.mkt-page .section {
+  padding-block: 90px;
+}
+.mkt-page .section--tight {
+  padding-block: 64px;
+}
+.mkt-page .hero {
+  padding-block: 80px 64px;
+}
+.mkt-page .hero__top {
+  gap: 24px;
+  margin-bottom: 48px;
+}
+.mkt-page .kicker {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  padding: 7px 12px;
+  background: #fff;
+  border-color: var(--line);
+  box-shadow: none;
+}
+.mkt-page :is(.btn--primary, .btn--inverse),
+.mkt-page :is(.btn--primary, .btn--inverse):hover {
+  color: #252523;
+  background: #f2c351;
+  border-color: #e1b240;
+  box-shadow: 0 2px 0 rgb(37 37 35 / 7%);
+}
+.mkt-page :is(.btn--primary, .btn--inverse):hover {
+  background: #f6cc68;
+}
+.mkt-page .btn {
+  min-height: 48px;
+  border-radius: 9px;
+  font-weight: 600;
+}
+.mkt-page .btn--ghost {
+  background: transparent;
+  border-color: #d0d2c9;
+  box-shadow: none;
+}
+.mkt-page .btn--ghost:hover {
+  background: #f5eee2;
+  color: #252523;
+}
+.mkt-page .section--ink {
+  background: #252523;
+  color: #fff9ef;
+}
+.mkt-page .section--ink :is(h1, h2, h3, h4, .h-section, .lead) {
+  color: #fff9ef;
+}
+.mkt-page .section--ink :is(.cta__sub, .cta__fine) {
+  color: #c9cfc6;
+}
+.mkt-page :is(.aca-card, .feature-card, .card) {
+  border-color: var(--line);
+  border-radius: 16px;
+}
+.mkt-page .aca-card {
+  background: #fff;
+  padding: 28px;
+  box-shadow: none;
+}
+.mkt-page .aca-card:hover {
+  border-color: #d2bca6;
+  box-shadow: var(--shadow-lift);
+}
+.mkt-page .aca-card__title {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  font-size: 24px;
+}
+.mkt-page :is(.aca-card__excerpt, .aca-card__meta) {
+  font-size: 14px;
+}
+.mkt-page input:not([type="checkbox"]):not([type="radio"]),
+.mkt-page select,
+.mkt-page textarea {
+  border-radius: 9px;
+}
+.mkt-page :is(a, button, input, select, textarea):focus-visible,
+.mkt-chrome :is(a, button):focus-visible {
+  outline: 3px solid #317d80;
+  outline-offset: 4px;
+}
+.mkt-page :is(.hero, .section, [id]) {
+  scroll-margin-top: 100px;
+}
+
+/* Shared navigation: a full-width calm header with one prominent action. */
+.aca-marketing.mkt-header {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  border-bottom: 1px solid #e5e3da;
+  background: rgb(255 249 239 / 97%);
+  backdrop-filter: blur(12px);
+}
+.mkt-nav {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  max-width: 1376px;
+  min-height: 82px;
+  margin-inline: auto;
+  padding-inline: 48px;
+}
+.mkt-nav__brand {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding-block: 8px;
+}
+.mkt-nav__desktop {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 32px;
+  flex: 1;
+  min-width: 0;
+}
+.mkt-nav__links,
+.mkt-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: 21px;
+}
+.mkt-nav__link,
+.mkt-nav__signin {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  padding-block: 10px;
+}
+.mkt-chrome .mkt-nav__link {
+  color: #60665e;
+}
+.mkt-chrome .mkt-nav__link:hover,
+.mkt-chrome .mkt-nav__link.is-active {
+  color: #252523;
+}
+.mkt-nav__github {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 8px;
+  margin-inline: -8px;
+  border-radius: 8px;
+}
+.mkt-chrome .mkt-nav__github {
+  color: #60665e;
+}
+.mkt-chrome .mkt-nav__github:hover {
+  color: #252523;
+}
+.mkt-nav__github:focus-visible {
+  outline: 2px solid #dc6c47;
+  outline-offset: 2px;
+}
+.mkt-nav__link.is-active::after {
+  content: "";
+  position: absolute;
+  height: 2px;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  border-radius: 4px;
+  background: #dc6c47;
+}
+.mkt-nav__badge {
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 650;
+  color: #936020;
+  border: 1px solid #e5d4a5;
+  border-radius: 4px;
+  padding: 3px 4px;
+  background: #faf0d1;
+}
+.mkt-chrome .mkt-nav__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 10px 16px;
+  background: #f2c351;
+  color: #252523;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #e1b240;
+  border-radius: 8px;
+  box-shadow: 0 2px 0 rgb(37 37 35 / 6%);
+}
+.mkt-chrome .mkt-nav__cta:hover {
+  background: #f6cc68;
+}
+.mkt-nav__toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dedfd5;
+  background: #fff;
+  color: #252523;
+  border-radius: 9px;
+  cursor: pointer;
+}
+.mkt-chrome .mkt-nav__mobile-start {
+  display: none;
+}
+.mkt-nav__mobile {
+  display: none;
+}
+
+/* Editorial footer. Directory badges retain their links without dominating. */
+.aca-marketing.mkt-footer {
+  border-top: 1px solid #e5e3da;
+  padding-block: 70px 30px;
+}
+.mkt-footer__inner {
+  max-width: 1376px;
+  margin-inline: auto;
+  padding-inline: 48px;
+}
+.mkt-footer__top {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 54px;
+}
+.mkt-footer__brand p {
+  margin-top: 18px;
+  font-size: 22px;
+  line-height: 1.35;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+.mkt-footer__brand > span {
+  display: block;
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #656b64;
+  max-width: 250px;
+}
+.mkt-chrome .mkt-footer__start {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 22px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #a8492c;
+}
+.mkt-footer__col h2 {
+  margin: 6px 0 20px;
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #252523;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+.mkt-footer__col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 13px;
+}
+.mkt-footer__col li {
+  padding: 0;
+  line-height: 1.5;
+}
+.mkt-chrome .mkt-footer__col a {
+  color: #656b64;
+  font-size: 14px;
+}
+.mkt-chrome .mkt-footer__col a:hover {
+  color: #252523;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.mkt-footer__bottom {
+  padding-top: 26px;
+  border-top: 1px solid #e5e3da;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  font-size: 12px;
+  color: #62675d;
+}
+.mkt-footer__bottom > div {
+  display: flex;
+  gap: 22px;
+}
+.mkt-footer__badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 26px;
+  opacity: 0.65;
+}
+.mkt-footer__badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+}
+.mkt-footer__badge img {
+  max-height: 20px;
+  width: auto;
+  max-width: 150px;
+  object-fit: contain;
+}
+.mkt-footer__badges:hover {
+  opacity: 1;
+}
+
+@media (max-width: 1200px) {
+  .mkt-nav {
+    gap: 24px;
+  }
+  .mkt-nav__desktop {
+    gap: 20px;
+  }
+  .mkt-nav__links,
+  .mkt-nav__actions {
+    gap: 15px;
+  }
+  .mkt-footer__top {
+    gap: 36px;
+  }
+}
+@media (max-width: 1100px) {
+  .mkt-nav {
+    justify-content: space-between;
+  }
+  .mkt-nav__desktop {
+    display: none;
+  }
+  .mkt-nav__toggle {
+    display: inline-flex;
+  }
+  .mkt-chrome .mkt-nav__mobile-start {
+    display: inline-flex;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .mkt-nav__mobile {
+    position: absolute;
+    display: block;
+    top: calc(100% - 1px);
+    left: 0;
+    right: 0;
+    padding: 24px 48px;
+    border-bottom: 1px solid #dedfd5;
+    background: #fff9ef;
+    box-shadow: 0 12px 24px rgb(37 37 35 / 6%);
+    max-height: calc(100dvh - 82px);
+    overflow-y: auto;
+  }
+  .mkt-nav__mobile-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 28px;
+  }
+  .mkt-nav__mobile .mkt-nav__link {
+    font-size: 16px;
+    padding-block: 12px;
+  }
+  .mkt-nav__mobile .mkt-nav__link.is-active::after {
+    right: auto;
+    width: 30px;
+  }
+  .mkt-nav__mobile-actions {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-top: 20px;
+    margin-top: 16px;
+    border-top: 1px solid #e5e3da;
+  }
+}
+@media (max-width: 700px) {
+  .mkt-page .wrap,
+  .mkt-nav,
+  .mkt-footer__inner {
+    padding-inline: 22px;
+  }
+  .mkt-page :is(h1, .h-hero) {
+    font-size: clamp(36px, 8vw, 48px);
+  }
+  .mkt-page :is(h2, .h-section) {
+    font-size: clamp(29px, 6.8vw, 38px);
+  }
+  .mkt-page .hero {
+    padding-block: 52px 40px;
+  }
+  .mkt-page .section {
+    padding-block: 60px;
+  }
+  .mkt-page .lead {
+    font-size: 16px;
+  }
+  .mkt-page .aca-card {
+    padding: 22px;
+  }
+  .mkt-nav {
+    min-height: 68px;
+    gap: 14px;
+  }
+  .mkt-chrome .mkt-nav__mobile-start {
+    padding-inline: 12px;
+    min-height: 40px;
+    gap: 6px;
+    font-size: 12px;
+  }
+  .mkt-nav__mobile {
+    padding: 18px 22px 24px;
+    max-height: calc(100dvh - 68px);
+  }
+  .mkt-nav__mobile-links {
+    gap: 4px 16px;
+  }
+  .mkt-footer__top {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 24px;
+  }
+  .mkt-footer__brand {
+    grid-column: 1 / -1;
+    margin-bottom: 10px;
+  }
+  .mkt-footer__brand > span {
+    max-width: none;
+  }
+  .mkt-footer__bottom {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .mkt-footer__badges {
+    gap: 12px;
+  }
+  .aca-marketing.mkt-footer {
+    padding-block: 48px 26px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mkt-page .btn {
+    transition: none;
+  }
+  .mkt-page .btn:hover {
+    transform: none;
+  }
+}
+
+/* Inverse kicker on ink sections. `.mkt-page .kicker` above sets a white pill,
+   which outranked aca-home.css's `.kicker--inv` and left near-white text on
+   white. Same specificity, declared later, so the inverse wins again. */
+.mkt-page .kicker--inv {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.78);
+}

@@ -1,0 +1,50 @@
+import { NodeCopyPreview } from "@/components/campaign-builder/nodes/NodeCopyPreview";
+import { memo } from "react";
+import { type NodeProps, type Node } from "@xyflow/react";
+import { UserPlus, Sparkles } from "lucide-react";
+import {
+  BaseNode,
+  type NodeValidation,
+} from "@/components/campaign-builder/nodes/BaseNode";
+import { campaignNodeCopyPreview } from "@/lib/campaign-node-preview";
+import type { ConnectionRequestNodeData } from "@/lib/sequence-utils";
+
+type ConnectionRequestNodeProps = NodeProps<
+  Node<ConnectionRequestNodeData & Record<string, unknown>>
+>;
+
+function ConnectionRequestNodeComponent({
+  data,
+  selected,
+}: ConnectionRequestNodeProps) {
+  const preview = campaignNodeCopyPreview(data);
+  return (
+    <BaseNode
+      icon={
+        preview.isPrompt ? (
+          <Sparkles className="h-4 w-4" />
+        ) : (
+          <UserPlus className="h-4 w-4" />
+        )
+      }
+      label="Connection Request"
+      customLabel={data.customLabel || data.label}
+      sublabel={preview.summary}
+      category="action"
+      channel="linkedin"
+      selected={selected}
+      handles={{ source: ["default"], target: true }}
+      validation={data.__validation as NodeValidation | undefined}
+    >
+      {(preview.content || preview.subject) && (
+        <NodeCopyPreview
+          content={preview.content}
+          subject={preview.subject}
+          isPrompt={preview.isPrompt}
+        />
+      )}
+    </BaseNode>
+  );
+}
+
+export const ConnectionRequestNode = memo(ConnectionRequestNodeComponent);

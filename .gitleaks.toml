@@ -1,0 +1,19 @@
+# gitleaks: the default rules, minus findings checked by hand and known to be harmless.
+# CI and scripts/oss/export-public.py both run with this file (gitleaks v8.24).
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Lookup names, public identifiers and code identifiers, not secrets"
+regexTarget = "line"
+regexes = [
+  '''key: ['"][A-Za-z]+-\d{3}i?['"]''',        # font keys (Inter-800, InstrumentSerif-400i)
+  '''key: "pc_[a-z0-9_]+"''',                  # onboarding email keys
+  '''APIFY_ACTOR_ID = ['"]''',                  # public Apify actor ids
+  '''INDEXNOW_KEY = "''',                       # IndexNow keys are published at /<key>.txt by design
+  '''BEGIN OPENSSH PRIVATE KEY-----"\)''',      # format description in a comment
+  '''(?i)linkedin[A-Za-z]*Id,''',                # destructured names (linkedInAccountId,), even when the match spans lines
+  '''(?i)(use|fetch|has)LinkedIn''',            # hook and function names
+  '''selected\.linkedin\s*=''',                 # a form field
+]

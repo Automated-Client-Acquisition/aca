@@ -1,0 +1,447 @@
+/* Integration presentation is scoped independently from the product previews. */
+.acq-home .acq-logo-strip {
+  padding: 32px 0 40px;
+}
+.acq-stack__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+.acq-home .acq-stack__heading h2 {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: #26372d;
+}
+.acq-stack__heading a {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #556256;
+  font-size: 13px;
+  font-weight: 500;
+}
+.acq-stack__logos {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid #e1e4dc;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+}
+.acq-stack__logos li {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 76px;
+  padding: 16px 12px;
+  border-right: 1px solid #e9ece5;
+  border-bottom: 1px solid #e9ece5;
+}
+.acq-stack__logos li:nth-child(6n) {
+  border-right: 0;
+}
+.acq-stack__logos li:nth-last-child(-n + 6) {
+  border-bottom: 0;
+}
+.acq-home .acq-stack .integration-brand {
+  gap: 10px;
+  color: #28352f;
+  font-size: 15px;
+  font-weight: 550;
+  min-height: 32px;
+}
+.acq-home .acq-stack .integration-brand__icon,
+.acq-home .acq-directory .integration-brand__icon {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  object-fit: contain;
+}
+.acq-home .acq-integrations {
+  padding: 72px 0 80px;
+}
+.acq-connections-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 40px;
+  padding-bottom: 32px;
+}
+.acq-home .acq-connections-heading h2 {
+  font-size: clamp(30px, 3vw, 42px);
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+  font-weight: 600;
+  margin: 12px 0 14px;
+}
+.acq-home .acq-connections-heading p {
+  max-width: 530px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #607066;
+}
+.acq-connections-heading__note {
+  flex: none;
+  color: #7c887d;
+  font-size: 14px;
+  line-height: 1.65;
+  text-align: right;
+}
+.acq-directory {
+  border: 1px solid #dfe4dc;
+  border-radius: 16px;
+  background: #fff;
+  overflow: hidden;
+}
+.acq-directory__toolbar {
+  padding: 20px 24px 0;
+}
+.acq-directory__filters {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.acq-directory__filters button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 10px 13px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: #59665e;
+  font: 500 13px/1.4 var(--font-sans);
+  cursor: pointer;
+  transition:
+    background 150ms,
+    color 150ms;
+}
+.acq-directory__filters button:hover {
+  background: #f1f4ed;
+  color: #1e3025;
+}
+.acq-directory__filters button[aria-pressed="true"] {
+  background: #25382c;
+  color: #fff;
+}
+.acq-directory__filters button span {
+  font-size: 11px;
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+.acq-home .acq-directory__summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 20px 0 0;
+  padding: 17px 0;
+  border-top: 1px solid #e9ece5;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #637168;
+}
+.acq-directory__summary > span {
+  flex: none;
+  font-size: 12px;
+}
+.acq-directory__cards {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0 24px;
+}
+.acq-directory__card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 22px 16px 22px 0;
+  border-top: 1px solid #e9ece5;
+}
+.acq-directory__mark {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex: none;
+  width: 36px;
+  height: 36px;
+}
+.acq-home .acq-directory .integration-brand {
+  min-height: 0;
+  gap: 0;
+}
+.acq-home .acq-directory .integration-brand__icon {
+  width: 32px;
+  height: 32px;
+}
+.acq-directory__details {
+  min-width: 0;
+}
+.acq-home .acq-directory__details .acq-directory__name {
+  display: block;
+  margin: 0 0 5px;
+  font-size: 14px;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #213329;
+}
+.acq-home .acq-directory__details p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #67756d;
+}
+.acq-directory__billing {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid #e3e7df;
+  background: #f7f9f4;
+  color: #4a6250;
+}
+.acq-directory__billing svg {
+  flex: none;
+}
+.acq-home .acq-directory__billing p {
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0;
+  color: #637168;
+}
+.acq-directory__billing strong {
+  font-weight: 600;
+  color: #2b4333;
+  margin-right: 8px;
+}
+.acq-home .acq-agent-note {
+  margin-top: 18px;
+  padding: 20px 24px;
+  background: transparent;
+  border-color: #dfe4dc;
+}
+.acq-home .acq-agent-note p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.acq-home .acq-agent-note strong {
+  display: inline;
+  margin-right: 6px;
+}
+.acq-home .acq-agent-note a {
+  font-size: 12px;
+}
+
+@media (max-width: 1050px) {
+  .acq-directory__cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .acq-stack__logos {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .acq-stack__logos li:nth-child(n) {
+    border-right: 1px solid #e9ece5;
+    border-bottom: 1px solid #e9ece5;
+  }
+  .acq-stack__logos li:nth-child(3n) {
+    border-right: 0;
+  }
+  .acq-stack__logos li:nth-last-child(-n + 3) {
+    border-bottom: 0;
+  }
+  .acq-connections-heading__note {
+    display: none;
+  }
+}
+@media (max-width: 650px) {
+  .acq-home .acq-logo-strip {
+    padding: 28px 0;
+  }
+  .acq-stack__heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 16px;
+  }
+  .acq-stack__heading a {
+    font-size: 12px;
+  }
+  .acq-stack__logos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-radius: 10px;
+  }
+  .acq-stack__logos li {
+    min-height: 62px;
+    padding: 12px 8px;
+  }
+  .acq-stack__logos li:nth-child(n) {
+    border-right: 1px solid #e9ece5;
+    border-bottom: 1px solid #e9ece5;
+  }
+  .acq-stack__logos li:nth-child(2n) {
+    border-right: 0;
+  }
+  .acq-stack__logos li:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+  .acq-home .acq-stack .integration-brand {
+    font-size: 13px;
+    gap: 8px;
+  }
+  .acq-home .acq-stack .integration-brand__icon {
+    width: 23px;
+    height: 23px;
+  }
+  .acq-home .acq-integrations {
+    padding: 48px 0;
+  }
+  .acq-connections-heading {
+    padding-bottom: 24px;
+  }
+  .acq-home .acq-connections-heading p {
+    font-size: 14px;
+  }
+  .acq-directory {
+    border-radius: 12px;
+  }
+  .acq-directory__toolbar {
+    padding: 15px 15px 0;
+  }
+  .acq-directory__filters {
+    gap: 4px;
+  }
+  .acq-directory__filters button {
+    padding: 9px 10px;
+    min-height: 42px;
+    font-size: 12px;
+    gap: 6px;
+  }
+  .acq-home .acq-directory__summary {
+    margin-top: 15px;
+    font-size: 12px;
+    gap: 10px;
+  }
+  .acq-directory__summary > span {
+    display: none;
+  }
+  .acq-directory__cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 0 15px;
+  }
+  .acq-directory__card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 20px 10px 20px 0;
+  }
+  .acq-directory__mark {
+    width: 36px;
+  }
+  .acq-home .acq-directory__details .acq-directory__name {
+    font-size: 14px;
+  }
+  .acq-home .acq-directory__details p {
+    font-size: 12px;
+  }
+  .acq-directory__billing {
+    padding: 16px;
+    align-items: flex-start;
+  }
+  .acq-directory__billing svg {
+    margin-top: 2px;
+  }
+  .acq-directory__billing strong {
+    display: block;
+    margin-right: 0;
+  }
+  .acq-home .acq-agent-note {
+    padding: 17px;
+    align-items: flex-start;
+  }
+  .acq-home .acq-agent-note > a {
+    margin-left: 34px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .acq-directory__filters button {
+    transition: none;
+  }
+}
+
+/* Preserve the vendors' intended contrast for these two marks. */
+.acq-home .acq-directory [data-brand="Success.ai"] .integration-brand__icon {
+  padding: 5px;
+  border-radius: 7px;
+  background: #216fed;
+}
+
+/* Equal symbol slots and shared name typography normalize the whole set. */
+.acq-home .acq-stack .integration-brand--symbol {
+  display: grid;
+  grid-template-columns: 28px auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 550;
+  line-height: 1.3;
+}
+.acq-home .acq-stack .integration-brand--symbol .integration-brand__icon {
+  width: 28px;
+  height: 28px;
+  max-width: none;
+}
+.acq-home .acq-directory .integration-brand--symbol .integration-brand__icon {
+  width: 32px;
+  height: 32px;
+  max-width: none;
+}
+@media (max-width: 650px) {
+  .acq-home .acq-stack .integration-brand--symbol {
+    grid-template-columns: 24px auto;
+    gap: 8px;
+    font-size: 13px;
+  }
+  .acq-home .acq-stack .integration-brand--symbol .integration-brand__icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.acq-home .acq-directory__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 18px auto 0;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid #d9d6cb;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #252523;
+  font: 600 14px var(--font-sans);
+  cursor: pointer;
+}
+.acq-home .acq-directory__more:hover {
+  background: #f6f5f1;
+}
+.acq-home .acq-directory__more:focus-visible {
+  outline: 2px solid #252523;
+  outline-offset: 2px;
+}

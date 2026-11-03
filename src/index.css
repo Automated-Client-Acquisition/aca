@@ -1,0 +1,498 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =============================================================================
+   ACA DESIGN SYSTEM
+   =============================================================================
+
+   Brand: ACA (Automated Client Acquisition)
+   Brand Colors: Red (#DC3A38) + Gold (#F1D07B) + Warm Neutrals
+
+   This design system provides consistent styling across the entire application.
+   All colors use HSL format for easy manipulation.
+
+   USAGE GUIDE:
+
+   1. PRIMARY (Red) - Brand identity
+      - Use for: Links, accents, important UI elements, brand marks
+      - Classes: text-primary, bg-primary, border-primary
+
+   2. CTA (Gold) - Call-to-action
+      - Use for: Buttons, upgrade prompts, action items
+      - Classes: bg-cta, text-cta-foreground, hover:bg-cta-hover
+
+   3. PRO (Red-tinted) - Premium/upgrade features
+      - Use for: Pro feature cards, upgrade prompts, gated content
+      - Classes: bg-pro-bg, border-pro-border, text-pro-text
+
+   4. SEMANTIC COLORS
+      - Success: green-500/600
+      - Warning: Use CTA gold or orange-500
+      - Error/Destructive: Use destructive token
+      - Info: blue-500/600
+
+   GRADIENTS:
+   - gradient-aca: Red brand gradient (headers, badges, icons)
+   - gradient-cta: Gold CTA gradient (buttons)
+
+   ============================================================================= */
+
+@layer base {
+  :root {
+    /* =========================================================================
+       CORE THEME COLORS
+       ========================================================================= */
+
+    /* Background - Warm beige from website (#F8F7F5) */
+    --background: 40 20% 97%;
+    --foreground: 220 13% 13%;
+
+    /* Cards & Surfaces */
+    --card: 0 0% 100%;
+    --card-foreground: 220 13% 13%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 13% 13%;
+
+    /* =========================================================================
+       BRAND COLORS
+       ========================================================================= */
+
+    /* Primary - ACA Red (#DC3A38)
+       Use for: Links, focus rings, brand accents, important elements */
+    --primary: 1 70% 54%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - Warm beige for subtle backgrounds */
+    --secondary: 40 15% 94%;
+    --secondary-foreground: 220 13% 13%;
+
+    /* Muted - Subtle backgrounds and disabled states */
+    --muted: 40 12% 94%;
+    --muted-foreground: 30 5% 45%;
+
+    /* Accent - For highlighted but not primary elements */
+    --accent: 40 15% 94%;
+    --accent-foreground: 220 13% 13%;
+
+    /* Destructive - Errors, deletions, warnings */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* =========================================================================
+       BORDERS & INPUTS
+       ========================================================================= */
+
+    /* Warm grey borders (#E4E4E4) */
+    --border: 0 0% 89%;
+    --input: 0 0% 89%;
+    --ring: 30 5% 50%;
+    --radius: 0.75rem;
+
+    /* =========================================================================
+       ACA BRAND PALETTE
+       ========================================================================= */
+
+    /* Red - Primary brand color */
+    --aca-red: 1 70% 54%;
+    --aca-red-light: 1 70% 95%;
+    --aca-red-dark: 1 70% 45%;
+
+    /* Warm Neutrals from website */
+    --aca-beige: 40 20% 97%;
+    --aca-tan: 42 78% 84%;
+    --aca-gold: 43 80% 72%;
+    --aca-grey: 0 0% 56%;
+    --aca-grey-light: 0 0% 89%;
+
+    /* =========================================================================
+       CTA BUTTON COLORS
+       Gold from website (#F1D07B) - High contrast, attention-grabbing
+       ========================================================================= */
+
+    --cta: 43 80% 72%;
+    --cta-foreground: 0 0% 0%;
+    --cta-hover: 43 80% 65%;
+
+    /* =========================================================================
+       PRO/UPGRADE FEATURE COLORS
+       Red-tinted backgrounds for premium feature prompts
+       ========================================================================= */
+
+    --pro-bg: 1 70% 97%;
+    --pro-border: 1 60% 85%;
+    --pro-text: 1 70% 35%;
+    --pro-accent: 1 70% 54%;
+
+    /* =========================================================================
+       STATUS COLORS
+       For badges, indicators, and feedback
+       ========================================================================= */
+
+    --status-success: 142 71% 45%;
+    --status-success-bg: 142 71% 95%;
+    --status-warning: 43 80% 72%;
+    --status-warning-bg: 43 80% 95%;
+    --status-error: 0 84% 60%;
+    --status-error-bg: 0 84% 95%;
+    --status-info: 217 91% 60%;
+    --status-info-bg: 217 91% 95%;
+    --status-purple: 263 70% 55%;
+    --status-purple-bg: 263 70% 95%;
+    --status-teal: 172 66% 40%;
+    --status-teal-bg: 172 66% 95%;
+
+    /* Data viz: categorical slot 1 (validated: lightness, chroma, contrast) */
+    --viz-1: 213 68% 50%;
+
+    /* =========================================================================
+       GRADIENTS
+       ========================================================================= */
+
+    /* ACA Brand Gradient - Red, for headers and brand elements */
+    --gradient-aca: linear-gradient(135deg, hsl(1, 70%, 54%) 0%, hsl(15, 70%, 50%) 100%);
+
+    /* CTA Gradient - Gold, for buttons and calls-to-action */
+    --gradient-cta: linear-gradient(135deg, hsl(43, 80%, 72%) 0%, hsl(38, 85%, 65%) 100%);
+
+    /* Content type gradients (for pipeline/feature differentiation) */
+    /* NOTE: gradient-purple kept for legacy compatibility but now uses primary red */
+    --gradient-purple: linear-gradient(135deg, hsl(1, 70%, 54%) 0%, hsl(15, 70%, 50%) 100%);
+    --gradient-blue: linear-gradient(135deg, hsl(217, 91%, 60%) 0%, hsl(207, 91%, 70%) 100%);
+    --gradient-pink: linear-gradient(135deg, hsl(330, 81%, 56%) 0%, hsl(340, 81%, 66%) 100%);
+    --gradient-orange: linear-gradient(135deg, hsl(24, 95%, 53%) 0%, hsl(34, 95%, 63%) 100%);
+    --gradient-red: linear-gradient(135deg, hsl(1, 70%, 54%) 0%, hsl(15, 80%, 58%) 100%);
+    --gradient-green: linear-gradient(135deg, hsl(142, 71%, 45%) 0%, hsl(152, 71%, 55%) 100%);
+
+    /* =========================================================================
+       SIDEBAR
+       ========================================================================= */
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* =========================================================================
+       PLATFORM BRAND COLORS
+       ========================================================================= */
+
+    --platform-youtube: 0 100% 50%;
+    --platform-tiktok: 0 0% 0%;
+    --platform-instagram: 330 90% 50%;
+    --platform-linkedin: 201 100% 35%;
+    --platform-twitter: 203 89% 53%;
+    --platform-facebook: 220 46% 48%;
+
+    /* =========================================================================
+       TRANSITIONS
+       ========================================================================= */
+
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.15s ease;
+    --transition-bounce: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* ===========================================================================
+     DARK MODE
+     =========================================================================== */
+
+  .dark {
+    --background: 220 13% 9%;
+    --foreground: 0 0% 98%;
+
+    --card: 220 13% 13%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 220 13% 13%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Primary stays consistent in dark mode */
+    --primary: 1 70% 56%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 13% 23%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 220 13% 17%;
+    --muted-foreground: 220 9% 65%;
+
+    --accent: 220 13% 17%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 20%;
+    --input: 220 13% 20%;
+    --ring: 220 9% 50%;
+
+    /* Dark mode brand colors */
+    --aca-red: 1 70% 56%;
+    --aca-red-light: 1 50% 20%;
+    --aca-red-dark: 1 70% 65%;
+
+    /* CTA - slightly brighter in dark mode */
+    --cta: 43 80% 72%;
+    --cta-foreground: 0 0% 0%;
+    --cta-hover: 43 80% 78%;
+
+    /* Pro features - dark mode */
+    --pro-bg: 1 50% 15%;
+    --pro-border: 1 50% 30%;
+    --pro-text: 1 60% 80%;
+    --pro-accent: 1 70% 60%;
+
+    /* Status colors - dark mode */
+    --status-success: 142 71% 50%;
+    --status-success-bg: 142 50% 15%;
+    --status-warning: 43 80% 72%;
+    --status-warning-bg: 43 50% 15%;
+    --status-error: 0 70% 55%;
+    --status-error-bg: 0 50% 15%;
+    --status-info: 217 91% 65%;
+    --status-info-bg: 217 50% 15%;
+    --status-purple: 263 70% 65%;
+    --status-purple-bg: 263 50% 15%;
+    --status-teal: 172 66% 50%;
+    --status-teal-bg: 172 50% 15%;
+
+    /* Data viz: categorical slot 1, stepped for the dark surface */
+    --viz-1: 213 77% 56%;
+
+    /* Sidebar - dark mode */
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Platform colors - adjusted for dark mode */
+    --platform-youtube: 0 100% 50%;
+    --platform-tiktok: 0 0% 100%;
+    --platform-instagram: 330 90% 60%;
+    --platform-linkedin: 201 100% 45%;
+    --platform-twitter: 203 89% 58%;
+    --platform-facebook: 220 46% 55%;
+  }
+}
+
+/* =============================================================================
+   BASE STYLES
+   ============================================================================= */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Text selection — readable on every background */
+  ::selection {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+  ::-moz-selection {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Better focus styles.
+     The ring is INSET on purpose. An offset ring is painted OUTSIDE the
+     element's box, so any focused control that sits flush against an
+     overflow:auto|hidden ancestor (dialog bodies, scroll panes, table
+     wrappers, the email RTE) had its ring shaved off along that edge — a
+     focused "Add another list" Select rendered with its left and right
+     segments missing, which reads as a broken control. An inset ring is
+     painted inside the box, so no ancestor can clip it. Input, Textarea and
+     SelectTrigger already use ring-inset for the same reason. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-inset;
+  }
+}
+
+/* =============================================================================
+   COMPONENT UTILITIES
+
+   Reusable utility classes for common patterns. Use these instead of
+   hardcoding colors in components.
+   ============================================================================= */
+
+@layer components {
+  /* ---------------------------------------------------------------------------
+     CTA BUTTONS
+     Use for primary call-to-action buttons (upgrades, sign up, etc.)
+     --------------------------------------------------------------------------- */
+
+  .btn-cta {
+    @apply bg-cta text-cta-foreground font-semibold shadow-md;
+    @apply hover:bg-cta-hover;
+    @apply transition-all duration-200;
+  }
+
+  .btn-cta-outline {
+    @apply border-2 border-cta text-cta-foreground bg-transparent;
+    @apply hover:bg-cta hover:text-cta-foreground;
+    @apply transition-all duration-200;
+  }
+
+  /* ---------------------------------------------------------------------------
+     PRO/UPGRADE FEATURE CONTAINERS
+     Use for upgrade prompts, gated features, premium content
+     --------------------------------------------------------------------------- */
+
+  .pro-container {
+    @apply bg-pro-bg border border-pro-border rounded-lg;
+    @apply dark:bg-[hsl(var(--pro-bg))] dark:border-[hsl(var(--pro-border))];
+  }
+
+  .pro-text {
+    @apply text-pro-text;
+    @apply dark:text-[hsl(var(--pro-text))];
+  }
+
+  .pro-badge {
+    @apply border-pro-border text-pro-text bg-pro-bg;
+    @apply dark:border-[hsl(var(--pro-border))] dark:text-[hsl(var(--pro-text))] dark:bg-[hsl(var(--pro-bg))];
+  }
+
+  /* ---------------------------------------------------------------------------
+     STATUS INDICATORS
+     Use for success, warning, error, info states
+     --------------------------------------------------------------------------- */
+
+  .status-success {
+    @apply bg-[hsl(var(--status-success-bg))] text-[hsl(var(--status-success))] border-[hsl(var(--status-success))];
+  }
+
+  .status-warning {
+    @apply bg-[hsl(var(--status-warning-bg))] text-[hsl(var(--status-warning))] border-[hsl(var(--status-warning))];
+  }
+
+  .status-error {
+    @apply bg-[hsl(var(--status-error-bg))] text-[hsl(var(--status-error))] border-[hsl(var(--status-error))];
+  }
+
+  .status-info {
+    @apply bg-[hsl(var(--status-info-bg))] text-[hsl(var(--status-info))] border-[hsl(var(--status-info))];
+  }
+
+  .status-purple {
+    @apply bg-[hsl(var(--status-purple-bg))] text-[hsl(var(--status-purple))] border-[hsl(var(--status-purple))];
+  }
+
+  .status-teal {
+    @apply bg-[hsl(var(--status-teal-bg))] text-[hsl(var(--status-teal))] border-[hsl(var(--status-teal))];
+  }
+
+  /* ---------------------------------------------------------------------------
+     BRAND GRADIENTS
+     Use for headers, badges, featured elements
+     --------------------------------------------------------------------------- */
+
+  .gradient-brand {
+    background: var(--gradient-aca);
+  }
+
+  .gradient-cta {
+    background: var(--gradient-cta);
+  }
+
+  /* ---------------------------------------------------------------------------
+     CARDS WITH BRAND ACCENT
+     --------------------------------------------------------------------------- */
+
+  .card-featured {
+    @apply border-primary/20 shadow-lg;
+    @apply hover:border-primary/40 hover:shadow-xl;
+    @apply transition-all duration-200;
+  }
+
+  .card-pro {
+    @apply border-pro-border bg-pro-bg;
+    @apply dark:border-[hsl(var(--pro-border))] dark:bg-[hsl(var(--pro-bg))];
+  }
+}
+
+/* =============================================================================
+   ANIMATIONS
+   ============================================================================= */
+
+@keyframes pulse-gentle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.scrape-active {
+  animation: pulse-gentle 2s ease-in-out infinite;
+}
+
+@keyframes scan {
+  0% {
+    top: -4px;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+.animate-scan {
+  animation: scan 2s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}

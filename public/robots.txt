@@ -1,0 +1,35 @@
+# Every crawler, AI answer engines included (GPTBot, PerplexityBot, ClaudeBot,
+# Google-Extended, ChatGPT-User), may read the public site. A crawler that has its
+# own group ignores the "*" group, so there is deliberately only one group here.
+# The disallowed paths are the logged-in app, checkout/funnel steps and duplicates.
+User-agent: *
+Allow: /
+Disallow: /auth
+Disallow: /settings
+Disallow: /campaigns/
+Disallow: /get-started
+Disallow: /sandbox
+Disallow: /access-cedric-github
+Disallow: /onboard/
+Disallow: /quote/
+Disallow: /autopilot-classic
+Disallow: /autopilots
+Disallow: /home-classic
+Disallow: /kit/order
+Disallow: /kit/vault
+Disallow: /kit/launch
+Disallow: /kit/welcome
+Disallow: /studio/order
+Disallow: /studio/vault
+Disallow: /studio/launch
+Disallow: /studio/welcome
+Disallow: /radar/order
+Disallow: /radar/vault
+Disallow: /radar/launch
+Disallow: /radar/welcome
+
+Sitemap: https://www.automatedclientacquisition.com/sitemap.xml
+
+# LLM Context
+# See https://llmstxt.org for specification
+Llms-Txt: https://www.automatedclientacquisition.com/llms.txt

@@ -1,0 +1,1324 @@
+/* ==========================================================================
+   ACA Slide Engine — scoped styles
+   Everything is namespaced under .aca-slides so the presentation owns its own
+   dark brand theme regardless of the surrounding app's (light) theme.
+   ========================================================================== */
+
+.aca-slides {
+  /* Brand tokens — matched to automatedclientacquisition.com */
+  --black: #0d0b0a;
+  --card: #141824;
+  --border: #1e2535;
+  --accent: #e8512a;
+  --white: #f0ede8;
+  --muted: #8a8070;
+  --green: #22c55e;
+  --blue: #3aa0ff;
+
+  /* Premium surface system — glassy fills, depth, glow */
+  --surface: linear-gradient(180deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0) 42%), #141824;
+  --surface-deep: linear-gradient(180deg, #11151f 0%, #0c0f16 100%);
+  --radius: 16px;
+  --radius-lg: 20px;
+  --shadow-card: 0 28px 64px -32px rgba(0, 0, 0, 0.92), 0 8px 22px -14px rgba(0, 0, 0, 0.7);
+  --hairline: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --accent-soft: rgba(232, 81, 42, 0.13);
+  --accent-glow: 0 0 0 1px rgba(232, 81, 42, 0.4), 0 18px 48px -16px rgba(232, 81, 42, 0.4);
+
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-ui: "Inter", system-ui, -apple-system, sans-serif;
+
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 50% -12%, #1b1410 0%, rgba(13, 11, 10, 0) 55%),
+    var(--black);
+  color: var(--white);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  user-select: none;
+}
+
+.aca-slides *,
+.aca-slides *::before,
+.aca-slides *::after {
+  box-sizing: border-box;
+}
+
+/* --- Background treatment (every slide) ---------------------------------- */
+.aca-slides__bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  /* Cool depth glow, bottom-left + cinematic vignette */
+  background: radial-gradient(68% 58% at 12% 106%, rgba(58, 96, 168, 0.11) 0%, transparent 60%);
+  box-shadow: inset 0 0 260px 70px rgba(0, 0, 0, 0.55);
+}
+/* Subtle dot grid overlay */
+.aca-slides__bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--white) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.022;
+  -webkit-mask-image: radial-gradient(130% 100% at 50% 0%, #000 35%, transparent 85%);
+  mask-image: radial-gradient(130% 100% at 50% 0%, #000 35%, transparent 85%);
+}
+/* Radial red-brown glow, top-right — richer, more cinematic */
+.aca-slides__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    54% 56% at 86% 6%,
+    rgba(232, 81, 42, 0.26) 0%,
+    rgba(232, 81, 42, 0.08) 40%,
+    transparent 72%
+  );
+}
+
+/* --- Stage / slide ------------------------------------------------------- */
+.aca-slides__stage {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.aca-slides__slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(2.5rem, 7vw, 8rem);
+  padding-top: clamp(5rem, 9vh, 8rem);
+  padding-bottom: clamp(5rem, 9vh, 8rem);
+}
+.aca-slides__slide--center {
+  align-items: center;
+  text-align: center;
+}
+
+/* --- Shared text atoms --------------------------------------------------- */
+.aca-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: clamp(0.7rem, 0.95vw, 0.85rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+.aca-eyebrow::before {
+  content: "";
+  width: 1.7rem;
+  height: 1px;
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(232, 81, 42, 0.6);
+}
+.aca-slides__slide--center .aca-eyebrow {
+  justify-content: center;
+}
+.aca-step {
+  font-family: var(--font-mono);
+  font-size: clamp(0.72rem, 1vw, 0.9rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.75rem;
+}
+.aca-pill {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: clamp(0.7rem, 0.9vw, 0.82rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--white);
+  padding: 0.55rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: var(--shadow-card), var(--hairline);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  margin-bottom: 2rem;
+}
+.aca-slides__slide--center .aca-pill {
+  align-self: center;
+}
+
+.aca-headline {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  margin: 0;
+  text-shadow: 0 1px 24px rgba(0, 0, 0, 0.35);
+}
+.aca-headline em,
+.aca-quote em,
+.aca-accent {
+  font-style: italic;
+  color: var(--accent);
+  font-weight: 700;
+  text-shadow: 0 0 36px rgba(232, 81, 42, 0.35);
+}
+
+.aca-sub {
+  font-family: var(--font-ui);
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: 1.75rem;
+  max-width: 40ch;
+}
+
+/* --- title --------------------------------------------------------------- */
+.t-title .aca-headline {
+  font-size: clamp(2.6rem, 6.5vw, 6rem);
+}
+.t-title .aca-sub {
+  font-size: clamp(1rem, 1.6vw, 1.4rem);
+  max-width: 48ch;
+}
+
+/* --- warning ------------------------------------------------------------- */
+.t-warning .aca-headline {
+  font-size: clamp(2.2rem, 5vw, 4.5rem);
+  margin-bottom: 2rem;
+}
+.t-warning__body p {
+  font-family: var(--font-ui);
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+  line-height: 1.55;
+  color: var(--white);
+  margin: 0 0 0.6rem;
+  max-width: 52ch;
+}
+.t-warning__cta {
+  margin-top: 2.25rem;
+  font-family: var(--font-ui);
+  font-size: clamp(1.05rem, 1.6vw, 1.5rem);
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* --- problem ------------------------------------------------------------- */
+.t-two-col {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+  width: 100%;
+}
+.t-problem .aca-headline {
+  font-size: clamp(2rem, 4.4vw, 4rem);
+  margin-bottom: 2.25rem;
+}
+.aca-price-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+}
+.aca-price-table td {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: clamp(0.95rem, 1.3vw, 1.2rem);
+}
+.aca-price-table td:first-child {
+  color: var(--white);
+}
+.aca-price-table td:last-child {
+  text-align: right;
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--accent);
+}
+/* Real costs you DO pay: show prices plainly, no "cancelled" strikethrough */
+.aca-price-table--paid td:last-child {
+  color: var(--white);
+  text-decoration: none;
+}
+.aca-price-table tr.total td {
+  border-bottom: none;
+  padding-top: 1.4rem;
+  font-size: clamp(1.05rem, 1.5vw, 1.4rem);
+  text-decoration: none;
+}
+.aca-price-table tr.total td:first-child {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: clamp(0.75rem, 1vw, 0.95rem);
+}
+.aca-price-table tr.total td:last-child {
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 700;
+}
+.aca-bigstat {
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-card), var(--hairline);
+  padding: clamp(2rem, 4vw, 3.5rem) 1.5rem;
+}
+.aca-bigstat__value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(4rem, 11vw, 9rem);
+  line-height: 1;
+  color: var(--white);
+}
+.aca-bigstat__value em {
+  font-style: italic;
+  color: var(--accent);
+}
+.aca-bigstat__label {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: clamp(0.8rem, 1.1vw, 1rem);
+  color: var(--white);
+  margin-top: 1rem;
+}
+.aca-bigstat__sub {
+  font-family: var(--font-ui);
+  color: var(--muted);
+  margin-top: 0.4rem;
+  font-size: clamp(0.85rem, 1.1vw, 1rem);
+}
+
+/* --- command / update ---------------------------------------------------- */
+.t-command .aca-headline,
+.t-update .aca-headline {
+  font-size: clamp(2rem, 4.4vw, 4rem);
+  margin-bottom: 2rem;
+}
+.aca-cmd-label {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: clamp(0.7rem, 0.95vw, 0.85rem);
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+.aca-codeblock {
+  position: relative;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-card), var(--hairline);
+  padding: clamp(1.4rem, 2.5vw, 2.25rem);
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: clamp(0.95rem, 1.5vw, 1.4rem);
+  line-height: 1.65;
+  color: var(--white);
+}
+/* Orange top-edge line (plain blocks only; terminal has its own title bar) */
+.aca-codeblock::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), rgba(232, 81, 42, 0.15));
+}
+.aca-codeblock .url {
+  color: var(--accent);
+}
+.aca-codeblock .flag {
+  color: var(--muted);
+}
+.aca-codeblock .comment {
+  color: rgba(138, 128, 112, 0.65);
+  font-style: italic;
+}
+.aca-codeblock__line {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.aca-prompt {
+  color: var(--accent);
+  user-select: none;
+}
+
+.aca-body {
+  font-family: var(--font-ui);
+  color: var(--muted);
+  font-size: clamp(0.95rem, 1.3vw, 1.2rem);
+  line-height: 1.55;
+  margin-top: 1.5rem;
+  max-width: 60ch;
+}
+
+/* --- filetree ------------------------------------------------------------ */
+.t-filetree .aca-headline {
+  font-size: clamp(1.9rem, 4vw, 3.6rem);
+  margin-bottom: 1.5rem;
+}
+.aca-tree {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-deep);
+  box-shadow: var(--shadow-card), var(--hairline);
+  padding: clamp(1.4rem, 2.5vw, 2.25rem);
+  font-family: var(--font-mono);
+  font-size: clamp(0.85rem, 1.25vw, 1.15rem);
+  line-height: 1.8;
+}
+.aca-tree__line {
+  white-space: pre;
+  color: var(--muted);
+}
+.aca-tree__line.dir {
+  color: var(--white);
+  font-weight: 600;
+}
+.aca-tree__line.skill {
+  color: var(--accent);
+}
+.aca-tree__line.file {
+  color: var(--muted);
+}
+
+/* --- insight / two-commands ---------------------------------------------- */
+.t-insight .aca-headline,
+.t-two-commands .aca-headline {
+  font-size: clamp(2.1rem, 4.6vw, 4.2rem);
+  margin-bottom: 1.75rem;
+  max-width: 18ch;
+}
+.aca-insight-body {
+  position: relative;
+  font-family: var(--font-ui);
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+  line-height: 1.6;
+  color: var(--white);
+  padding-left: 1.4rem;
+  max-width: 60ch;
+  white-space: pre-line;
+}
+.aca-insight-body::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  bottom: 0.15em;
+  width: 3px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, var(--accent), rgba(232, 81, 42, 0.1));
+}
+.aca-insight-cmd {
+  margin-top: 2rem;
+  max-width: 720px;
+}
+.aca-two-cmds {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+  margin-top: 2rem;
+  width: 100%;
+}
+.aca-cmd-option__label {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: clamp(0.72rem, 1vw, 0.9rem);
+  margin-bottom: 0.6rem;
+}
+.aca-cmd-option__label.accent {
+  color: var(--accent);
+}
+.aca-cmd-option__label.muted {
+  color: var(--muted);
+}
+
+/* --- table --------------------------------------------------------------- */
+.t-table {
+  align-items: stretch;
+}
+.aca-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(0.85rem, 1.35vw, 1.25rem);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: var(--shadow-card), var(--hairline);
+}
+.aca-table th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: clamp(0.68rem, 0.95vw, 0.85rem);
+  color: var(--muted);
+  padding: 1rem 1.15rem;
+  background: rgba(255, 255, 255, 0.025);
+  border-bottom: 1px solid var(--border);
+}
+.aca-table th:not(:first-child),
+.aca-table td:not(:first-child) {
+  text-align: right;
+}
+.aca-table td {
+  padding: 1rem 1.15rem;
+  border-bottom: 1px solid rgba(30, 37, 53, 0.7);
+  color: var(--white);
+}
+.aca-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.aca-table tr.winner td {
+  background: var(--accent-soft);
+}
+.aca-table tr.winner td:first-child {
+  color: var(--accent);
+  font-weight: 700;
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.aca-badge {
+  display: inline-block;
+  margin-left: 0.6rem;
+  font-size: 0.62em;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.22em 0.7em;
+  color: #160f0c;
+  background: var(--accent);
+  border-radius: 999px;
+  vertical-align: middle;
+  box-shadow: 0 6px 16px -8px rgba(232, 81, 42, 0.8);
+}
+.aca-table__note {
+  font-family: var(--font-ui);
+  color: var(--muted);
+  font-size: clamp(0.82rem, 1.1vw, 1rem);
+  margin-top: 1.5rem;
+}
+
+/* --- stat ---------------------------------------------------------------- */
+.t-stat .aca-stat__value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(6rem, 18vw, 16rem);
+  line-height: 0.95;
+  color: var(--white);
+}
+.t-stat .aca-stat__value em {
+  font-style: italic;
+  color: var(--accent);
+}
+.t-stat .aca-stat__label {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: clamp(0.85rem, 1.3vw, 1.25rem);
+  color: var(--white);
+  margin-top: 1.5rem;
+}
+.t-stat .aca-sub {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  max-width: 46ch;
+}
+
+/* --- fullcircle ---------------------------------------------------------- */
+.t-fullcircle .aca-headline {
+  font-size: clamp(3rem, 9vw, 8rem);
+}
+.t-fullcircle .aca-sub {
+  margin-left: auto;
+  margin-right: auto;
+  font-size: clamp(1rem, 1.7vw, 1.5rem);
+  max-width: 50ch;
+}
+
+/* --- cta ----------------------------------------------------------------- */
+.t-cta .aca-headline {
+  font-size: clamp(2.4rem, 5.5vw, 5rem);
+  margin-bottom: 2.5rem;
+}
+.aca-paths {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+  width: 100%;
+  max-width: 980px;
+}
+.aca-path {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-card), var(--hairline);
+  padding: clamp(1.5rem, 2.5vw, 2.25rem);
+}
+.aca-path--primary {
+  border-color: var(--accent);
+  background: linear-gradient(180deg, rgba(232, 81, 42, 0.14), rgba(232, 81, 42, 0.05));
+  box-shadow: var(--accent-glow), var(--shadow-card);
+}
+.aca-path__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.2vw, 1.9rem);
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 0.75rem;
+}
+.aca-path--primary .aca-path__title {
+  color: var(--accent);
+}
+.aca-path__body {
+  font-family: var(--font-ui);
+  color: var(--muted);
+  line-height: 1.55;
+  font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+}
+.aca-cta__footer {
+  margin-top: 2.5rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: clamp(0.78rem, 1.05vw, 0.95rem);
+  color: var(--accent);
+}
+
+/* --- versus (before / after split) --------------------------------------- */
+.t-versus .aca-headline {
+  font-size: clamp(2rem, 4.4vw, 4rem);
+  margin-bottom: 2rem;
+}
+.aca-versus {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: clamp(1rem, 2.5vw, 2.25rem);
+  width: 100%;
+}
+.aca-versus__side {
+  min-width: 0;
+}
+.aca-versus__tag {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: clamp(0.66rem, 0.9vw, 0.8rem);
+  color: var(--muted);
+  margin-bottom: 0.85rem;
+}
+.aca-versus__tag--accent {
+  color: var(--accent);
+}
+.aca-versus__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+}
+.aca-versus__divider span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-card), var(--hairline);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--muted);
+}
+/* the "before" terminal reads tired/muted; the "after" chat pops */
+.aca-versus__side--before .aca-terminal {
+  opacity: 0.78;
+  filter: saturate(0.7);
+}
+
+/* --- diagram (animated architecture) ------------------------------------- */
+.t-diagram .aca-headline {
+  font-size: clamp(1.8rem, 3.6vw, 3.2rem);
+  margin-bottom: 0.5rem;
+}
+.aca-diagram {
+  width: min(94%, 1060px);
+  margin: 1.25rem auto 0;
+}
+.aca-diagram svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+.aca-diagram .d-card {
+  fill: #141824;
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+.aca-diagram .d-card--vps {
+  fill: #11151f;
+}
+.aca-diagram .d-chip {
+  fill: rgba(255, 255, 255, 0.04);
+  stroke: var(--border);
+  stroke-width: 1;
+}
+.aca-diagram .d-chip--accent {
+  fill: var(--accent-soft);
+  stroke: rgba(232, 81, 42, 0.5);
+}
+.aca-diagram .d-title {
+  fill: var(--white);
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.aca-diagram .d-label {
+  fill: var(--white);
+  font-family: var(--font-mono);
+  font-size: 15px;
+}
+.aca-diagram .d-muted {
+  fill: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+}
+.aca-diagram .d-accent {
+  fill: var(--accent);
+}
+.aca-diagram .d-flow {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: acaDraw 0.9s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.aca-diagram .d-flow--sync {
+  stroke: var(--blue);
+}
+.aca-diagram .d-dot {
+  fill: var(--accent);
+  animation: acaFade 0.5s ease both;
+}
+.aca-diagram .d-node {
+  animation: acaRise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes acaDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* --- video (real screen recording / Bunny clip) -------------------------- */
+.t-video .aca-headline {
+  font-size: clamp(1.8rem, 3.6vw, 3.2rem);
+  margin-bottom: 0.6rem;
+}
+.aca-video {
+  margin: 1.25rem auto 0;
+  width: min(82vw, 1120px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-deep);
+  box-shadow: var(--shadow-card), var(--hairline);
+  padding: 0.6rem;
+  overflow: hidden;
+}
+.aca-video__el {
+  display: block;
+  width: 100%;
+  max-height: 64vh;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #000;
+}
+.aca-video__frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+}
+.aca-video__frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.aca-video .aca-figure__cap {
+  margin-top: 0.7rem;
+}
+
+/* ==========================================================================
+   Chrome — fixed UI overlays
+   ========================================================================== */
+.aca-chrome {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+}
+.aca-topbar {
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(1.25rem, 3vw, 2.25rem) clamp(1.5rem, 4vw, 3rem);
+}
+.aca-logo {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+  color: var(--white);
+  letter-spacing: -0.01em;
+}
+.aca-logo span {
+  color: var(--accent);
+}
+.aca-counter {
+  font-family: var(--font-mono);
+  font-size: clamp(0.8rem, 1.05vw, 1rem);
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.aca-counter b {
+  color: var(--white);
+  font-weight: 500;
+}
+
+/* Progress bar */
+.aca-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background: var(--border);
+  z-index: 5;
+}
+.aca-progress__fill {
+  height: 100%;
+  background: var(--accent);
+  box-shadow: 0 0 14px rgba(232, 81, 42, 0.75);
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Key hints */
+.aca-hints {
+  bottom: clamp(1rem, 2.5vw, 1.75rem);
+  right: clamp(1.5rem, 4vw, 3rem);
+  display: flex;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+}
+.aca-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.9rem;
+  height: 1.9rem;
+  padding: 0 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: rgba(20, 24, 36, 0.6);
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+/* Notes toggle button */
+.aca-notes-btn {
+  position: absolute;
+  z-index: 6;
+  bottom: clamp(1rem, 2.5vw, 1.75rem);
+  left: clamp(1.5rem, 4vw, 3rem);
+  pointer-events: auto;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: lowercase;
+  color: var(--muted);
+  background: rgba(20, 24, 36, 0.6);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.aca-notes-btn:hover,
+.aca-notes-btn.active {
+  color: var(--white);
+  border-color: var(--accent);
+}
+
+/* Notes panel */
+.aca-notes-panel {
+  position: absolute;
+  z-index: 7;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 35vh;
+  background: rgba(8, 7, 6, 0.94);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border);
+  transform: translateY(100%);
+  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  overflow: hidden;
+}
+.aca-notes-panel.open {
+  transform: translateY(0);
+}
+.aca-notes-panel__inner {
+  max-width: 800px;
+  width: 100%;
+}
+.aca-notes-panel__label {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  color: var(--accent);
+  margin-bottom: 0.85rem;
+}
+.aca-notes-panel__text {
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--white);
+  white-space: pre-line;
+}
+
+/* Loading / error states */
+.aca-fallback {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: var(--black, #0d0b0a);
+  color: #f0ede8;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+}
+.aca-fallback a {
+  color: #e8512a;
+}
+
+/* ==========================================================================
+   Responsive — collapse two-column layouts on small screens
+   ========================================================================== */
+@media (max-width: 768px) {
+  .t-two-col,
+  .aca-two-cmds,
+  .aca-paths {
+    grid-template-columns: 1fr;
+  }
+  .aca-slides__slide {
+    padding-left: clamp(1.25rem, 6vw, 2.5rem);
+    padding-right: clamp(1.25rem, 6vw, 2.5rem);
+  }
+  .aca-bigstat {
+    margin-top: 0.5rem;
+  }
+  /* Hint keys are less useful on touch; keep counter + notes only */
+  .aca-hints {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Presenter / teleprompter window  (route: /slides/<slug>?present=1)
+   Detached from the audience view — only the presenter sees these notes.
+   Not namespaced under .aca-slides, so brand tokens are redeclared here.
+   ========================================================================== */
+.aca-presenter {
+  --black: #0d0b0a;
+  --accent: #e8512a;
+  --white: #f0ede8;
+  --muted: #8a8070;
+  --border: #1e2535;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 3.2vmin 4vmin 0;
+  background: var(--black);
+  color: var(--white);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.aca-presenter__bar {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+  padding-bottom: 2vmin;
+  border-bottom: 1px solid var(--border);
+}
+.aca-presenter__counter {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.aca-presenter__counter b { color: var(--white); }
+.aca-presenter__title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: rgba(240, 237, 232, 0.85);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aca-presenter__notes {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  font-size: clamp(1.5rem, 3.4vmin, 2.6rem);
+  line-height: 1.5;
+  font-weight: 500;
+  padding: 4vmin 0;
+}
+
+.aca-presenter__next {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 2vmin 0;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+.aca-presenter__next-label {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.68rem;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.aca-presenter__next-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aca-presenter__hint {
+  text-align: center;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: rgba(138, 128, 112, 0.6);
+  padding-bottom: 1.4vmin;
+}
+
+/* ==========================================================================
+   Entrance animations + rich content (images, quotes)
+   Slides remount per id (key={current.id}), so these replay on every slide.
+   ========================================================================== */
+@keyframes acaRise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes acaFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes acaKenBurns {
+  from { transform: scale(1.0); }
+  to   { transform: scale(1.08); }
+}
+
+/* The whole slide eases in; key atoms rise with a stagger. */
+.aca-slides__stage .aca-slides__slide { animation: acaFade 0.45s ease both; }
+
+.aca-slides__slide .aca-pill,
+.aca-slides__slide .aca-eyebrow,
+.aca-slides__slide .aca-step { animation: acaRise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
+.aca-slides__slide .aca-headline { animation: acaRise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) 0.07s both; }
+
+.aca-slides__slide .aca-sub,
+.aca-slides__slide .aca-body,
+.aca-slides__slide .aca-insight-body { animation: acaRise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both; }
+
+.aca-slides__slide .aca-codeblock,
+.aca-slides__slide .aca-chat,
+.aca-slides__slide .aca-video,
+.aca-slides__slide .aca-cmd-label,
+.aca-slides__slide .aca-two-cmds,
+.aca-slides__slide .aca-tree,
+.aca-slides__slide .aca-price-table,
+.aca-slides__slide .aca-table,
+.aca-slides__slide .aca-paths,
+.aca-slides__slide .aca-bigstat,
+.aca-slides__slide .aca-stat__value,
+.aca-slides__slide .aca-stat__label,
+.aca-slides__slide .t-warning__body,
+.aca-slides__slide .t-warning__cta,
+.aca-slides__slide .aca-figure,
+.aca-slides__slide .aca-quote,
+.aca-slides__slide .aca-quote__by,
+.aca-slides__slide .aca-table__note { animation: acaRise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) 0.24s both; }
+
+/* Table rows cascade in for extra life. */
+.aca-table tbody tr { animation: acaRise 0.42s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.aca-table tbody tr:nth-child(1) { animation-delay: 0.30s; }
+.aca-table tbody tr:nth-child(2) { animation-delay: 0.37s; }
+.aca-table tbody tr:nth-child(3) { animation-delay: 0.44s; }
+.aca-table tbody tr:nth-child(4) { animation-delay: 0.51s; }
+.aca-table tbody tr:nth-child(5) { animation-delay: 0.58s; }
+.aca-table tbody tr:nth-child(n + 6) { animation-delay: 0.65s; }
+
+/* --- Rich content: figures / images ------------------------------------- */
+.aca-figure {
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(20, 24, 36, 0.55);
+  padding: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.8);
+}
+.aca-figure__img {
+  display: block;
+  width: 100%;
+  max-height: 46vh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+.aca-figure__cap {
+  font-family: var(--font-mono);
+  font-size: clamp(0.68rem, 0.9vw, 0.8rem);
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 0.75rem;
+}
+/* Full image slide: bigger, centered, slow Ken Burns drift. */
+.t-image .aca-figure--feature {
+  max-width: min(70vw, 1000px);
+  margin: 1.5rem auto 0;
+}
+.t-image .aca-figure--feature .aca-figure__img {
+  max-height: 60vh;
+  animation: acaKenBurns 22s ease-out 0.5s both;
+}
+.t-insight--media .aca-figure__img { max-height: 56vh; }
+
+/* --- Rich content: pull quote ------------------------------------------- */
+.t-quote { gap: 1.5rem; }
+.aca-quote {
+  position: relative;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(1.9rem, 4.2vw, 3.6rem);
+  line-height: 1.18;
+  max-width: 18ch;
+  margin: 0 auto;
+}
+.aca-quote::before {
+  content: "\201C";
+  color: var(--accent);
+  margin-right: 0.05em;
+}
+.aca-quote::after { content: "\201D"; color: var(--accent); }
+.aca-quote__by {
+  font-family: var(--font-mono);
+  font-size: clamp(0.8rem, 1.1vw, 1rem);
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-top: 1.5rem;
+}
+.aca-quote__by::before { content: "— "; color: var(--accent); }
+
+/* Respect reduced-motion: no entrance animation, no drift. */
+@media (prefers-reduced-motion: reduce) {
+  .aca-slides__slide,
+  .aca-slides__slide *,
+  .aca-table tbody tr,
+  .t-image .aca-figure--feature .aca-figure__img {
+    animation: none !important;
+  }
+}
+
+/* Logo chip in the problem cost table */
+.aca-price-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.aca-price-logo {
+  width: 1.9em;
+  height: 1.9em;
+  flex: none;
+  border-radius: 6px;
+  background: #fff;
+  padding: 3px;
+  object-fit: contain;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+/* ==========================================================================
+   Terminal-window mockup (command slides with "terminal": true)
+   ========================================================================== */
+.aca-terminal {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #0b0e16;
+  overflow: hidden;
+  box-shadow: 0 26px 64px -32px rgba(0, 0, 0, 0.85);
+}
+.aca-terminal__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  background: rgba(255, 255, 255, 0.045);
+  border-bottom: 1px solid var(--border);
+}
+.aca-terminal__dot {
+  width: 0.72rem;
+  height: 0.72rem;
+  border-radius: 50%;
+  flex: none;
+}
+.aca-terminal__dot--r { background: #ff5f57; }
+.aca-terminal__dot--y { background: #febc2e; }
+.aca-terminal__dot--g { background: #28c840; }
+.aca-terminal__title {
+  margin-left: 0.65rem;
+  font-family: var(--font-mono);
+  font-size: clamp(0.68rem, 0.9vw, 0.82rem);
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.aca-terminal__body {
+  padding: clamp(1.2rem, 2.3vw, 2rem);
+  font-family: var(--font-mono);
+  font-size: clamp(0.95rem, 1.45vw, 1.4rem);
+  line-height: 1.7;
+  color: var(--white);
+  overflow-x: auto;
+}
+.aca-terminal__line { white-space: pre-wrap; word-break: break-word; }
+.aca-terminal__line.comment { color: var(--muted); }
+.aca-terminal__prompt {
+  color: var(--green);
+  margin-right: 0.6rem;
+  user-select: none;
+}
+.aca-terminal__body .url { color: var(--accent); }
+.aca-terminal__body .flag { color: var(--muted); }
+
+/* ==========================================================================
+   Telegram chat mockup (command slides with "chat": true)
+   ========================================================================== */
+.aca-chat {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #0e1621;            /* telegram dark */
+  overflow: hidden;
+  box-shadow: 0 26px 64px -32px rgba(0, 0, 0, 0.85);
+}
+.aca-chat__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.8rem 1.1rem;
+  background: #17212b;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.aca-chat__avatar {
+  width: 2.1rem;
+  height: 2.1rem;
+  flex: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(160deg, #3390ec, #1d6fd4);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.aca-chat__name {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  color: var(--white);
+  font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+}
+.aca-chat__status {
+  font-family: var(--font-ui);
+  font-size: clamp(0.7rem, 0.9vw, 0.82rem);
+  color: #5ea9f0;
+}
+.aca-chat__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: clamp(1.3rem, 2.4vw, 2.1rem);
+  gap: 0.6rem;
+}
+.aca-chat__msg {
+  position: relative;
+  max-width: 82%;
+  background: #2b5278;            /* outgoing telegram bubble */
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: clamp(1rem, 1.5vw, 1.5rem);
+  line-height: 1.45;
+  padding: 0.85rem 1.1rem 1.4rem;
+  border-radius: 16px 16px 4px 16px;
+}
+.aca-chat__time {
+  position: absolute;
+  right: 0.9rem;
+  bottom: 0.5rem;
+  font-size: 0.7rem;
+  color: #9fd0ff;
+  letter-spacing: 0.02em;
+}

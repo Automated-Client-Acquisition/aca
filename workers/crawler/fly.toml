@@ -1,0 +1,26 @@
+app = 'aca-crawler'
+primary_region = 'iad'
+
+[build]
+  image = 'unclecode/crawl4ai:0.8.0'
+
+[http_service]
+  internal_port = 11235
+  force_https = true
+  auto_stop_machines = 'stop'      # fully power off when idle = $0 when nothing is scraping
+  auto_start_machines = true       # analyze-company's /health probe (20s) wakes it on demand
+  min_machines_running = 0
+
+  # Fly restarts a machine that stops answering /health.
+  # Without this, a memory-wedged crawler stays 'started' forever (the 14h outage).
+  [[http_service.checks]]
+    interval = '30s'
+    timeout = '10s'
+    grace_period = '90s'   # crawl4ai needs ~15s+ to warm its browser pool on boot
+    method = 'GET'
+    path = '/health'
+
+[[vm]]
+  memory = '4gb'
+  cpu_kind = 'shared'
+  cpus = 2

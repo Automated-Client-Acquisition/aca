@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  app:
+    name: Lint and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Reports without blocking: the codebase still carries ~3,400 older errors,
+      # mostly no-explicit-any. Make it blocking once they're cleared.
+      - run: npm run lint
+        continue-on-error: true
+      # Placeholder Supabase settings: the build only needs them to prerender.
+      - run: npm run build
+        env:
+          VITE_ACA_SELF_HOSTED: "true"
+          VITE_SUPABASE_URL: http://127.0.0.1:54321
+          VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci
+
+  database:
+    name: Database from the baseline
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.116.0
+      # Applies supabase/migrations (the baseline) to a fresh local database.
+      - run: supabase db start
+      - run: supabase db reset --local
+      - run: supabase stop
+
+  workers:
+    name: Worker images
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cp .env.example .env
+      - run: docker compose --profile all config --quiet
+      - run: docker compose --profile outreach build
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.24.3 dir /repo --config /repo/.gitleaks.toml --no-banner --redact

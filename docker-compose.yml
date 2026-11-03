@@ -1,0 +1,170 @@
+# ACA background workers for a self-hosted install.
+#
+# The app itself is the static frontend plus Supabase (database, auth,
+# storage, edge functions). These workers do the long-running jobs the edge
+# functions hand off. Start only the groups you use:
+#
+#   docker compose --profile outreach up -d                # sending, inbox, campaigns
+#   docker compose --profile outreach --profile leads up -d
+#   docker compose --profile all up -d                     # everything
+#
+# Every service reads the root .env (copy .env.example). Edge functions reach
+# the workers over the internet, so publish the ports you use behind HTTPS
+# (a reverse proxy or tunnel) and set the matching *_URL secrets in Supabase,
+# e.g. COMPANY_ANALYZER_URL=https://analyzer.example.com.
+#
+# Profiles:
+#   outreach  campaign-processor, sequence-sender, imap-poller,
+#             email-sequence-generator, tracking-proxy
+#   leads     company-analyzer, crawler, list-building-scraper,
+#             list-building-verifier, signal-engine
+#   content   content-pipeline, text-generator, carousel-renderer,
+#             subtitle-renderer, video-renderer (needs a Remotion company
+#             license for for-profit teams of 4+), web-capture, notion-generator
+#   infra     byo-deployer (provisions your own mail servers over SSH)
+
+x-node-worker: &node-worker
+  restart: unless-stopped
+  env_file: [.env]
+  healthcheck:
+    # Node's own fetch: the slim images have no curl or wget.
+    test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:'+(process.env.PORT||8080)+'/health').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+    interval: 30s
+    timeout: 10s
+    start_period: 40s
+    retries: 3
+
+services:
+  # ── outreach ────────────────────────────────────────────────────────────
+  campaign-processor:
+    <<: *node-worker
+    build: ./workers/campaign-processor
+    profiles: [outreach, all]
+    ports: ["${CAMPAIGN_PROCESSOR_PORT:-8101}:8080"]
+    # content-pipeline reads the same name as a base URL, so neither takes it
+    # from .env.
+    environment:
+      EDGE_FUNCTION_URL: ${SUPABASE_URL}/functions/v1/campaign-processor
+
+  sequence-sender:
+    <<: *node-worker
+    build: ./workers/sequence-sender
+    profiles: [outreach, all]
+    ports: ["${SEQUENCE_SENDER_PORT:-8102}:8080"]
+
+  imap-poller:
+    <<: *node-worker
+    build: ./workers/imap-poller
+    profiles: [outreach, all]
+    ports: ["${IMAP_POLLER_PORT:-8103}:8080"]
+
+  email-sequence-generator:
+    <<: *node-worker
+    build: ./workers/email-sequence-generator
+    profiles: [outreach, all]
+    ports: ["${EMAIL_SEQUENCE_GENERATOR_PORT:-8104}:8080"]
+
+  # Serves unsubscribe and click links. Point UNSUBSCRIBE_FALLBACK_HOST (edge
+  # secret) at the public host you put in front of this port.
+  tracking-proxy:
+    <<: *node-worker
+    build: ./workers/tracking-proxy
+    profiles: [outreach, all]
+    ports: ["${TRACKING_PROXY_PORT:-8105}:8080"]
+
+  # ── leads ───────────────────────────────────────────────────────────────
+  company-analyzer:
+    <<: *node-worker
+    build: ./workers/company-analyzer
+    profiles: [leads, all]
+    ports: ["${COMPANY_ANALYZER_PORT:-8111}:8080"]
+
+  # Website crawler for company and product analysis. The edge functions call
+  # it (analyze-company and others), so publish it and set CRAWLER_BASE_URL.
+  crawler:
+    image: unclecode/crawl4ai:0.8.0
+    restart: unless-stopped
+    profiles: [leads, all]
+    ports: ["${CRAWLER_PORT:-8115}:11235"]
+    shm_size: 1g
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:11235/health', timeout=8)"]
+      interval: 30s
+      timeout: 10s
+      start_period: 90s
+      retries: 3
+
+  list-building-scraper:
+    <<: *node-worker
+    build: ./workers/list-building-scraper
+    profiles: [leads, all]
+    ports: ["${LIST_BUILDING_SCRAPER_PORT:-8112}:8080"]
+
+  list-building-verifier:
+    <<: *node-worker
+    build: ./workers/list-building-verifier
+    profiles: [leads, all]
+    ports: ["${LIST_BUILDING_VERIFIER_PORT:-8113}:8080"]
+    environment:
+      LIST_BUILDING_SCRAPER_URL: http://list-building-scraper:8080
+    depends_on: [list-building-scraper]
+
+  signal-engine:
+    <<: *node-worker
+    build: ./workers/signal-engine
+    profiles: [leads, all]
+    ports: ["${SIGNAL_ENGINE_PORT:-8114}:8080"]
+
+  # ── content ─────────────────────────────────────────────────────────────
+  content-pipeline:
+    <<: *node-worker
+    build: ./workers/content-pipeline
+    profiles: [content, all]
+    ports: ["${CONTENT_PIPELINE_PORT:-8121}:8080"]
+    environment:
+      EDGE_FUNCTION_URL: ${SUPABASE_URL}/functions/v1
+
+  text-generator:
+    <<: *node-worker
+    build: ./workers/text-generator
+    profiles: [content, all]
+    ports: ["${TEXT_GENERATOR_PORT:-8122}:8080"]
+
+  carousel-renderer:
+    <<: *node-worker
+    build: ./workers/carousel-renderer
+    profiles: [content, all]
+    ports: ["${CAROUSEL_RENDERER_PORT:-8123}:8080"]
+
+  subtitle-renderer:
+    <<: *node-worker
+    build: ./workers/subtitle-renderer
+    profiles: [content, all]
+    ports: ["${SUBTITLE_RENDERER_PORT:-8124}:8080"]
+
+  video-renderer:
+    <<: *node-worker
+    build: ./workers/video-renderer
+    profiles: [content, all]
+    ports: ["${VIDEO_RENDERER_PORT:-8125}:3000"]
+    environment:
+      PORT: "3000"
+
+  web-capture:
+    <<: *node-worker
+    build: ./workers/web-capture
+    profiles: [content, all]
+    ports: ["${WEB_CAPTURE_PORT:-8126}:8080"]
+
+  notion-generator:
+    <<: *node-worker
+    build: ./workers/notion-generator
+    profiles: [content, all]
+    ports: ["${NOTION_GENERATOR_PORT:-8127}:8080"]
+
+  # ── infra ───────────────────────────────────────────────────────────────
+  byo-deployer:
+    <<: *node-worker
+    build: ./services/byo-deployer
+    profiles: [infra, all]
+    ports: ["${BYO_DEPLOYER_PORT:-8131}:8080"]

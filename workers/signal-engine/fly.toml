@@ -1,0 +1,40 @@
+# fly.toml for aca-signal-engine
+#
+# Collector worker for the ACA Signal Engine. Polls EDGAR daily indexes and ATS
+# job boards, writes raw rows into signal_observations. No browser, so 512MB is
+# plenty and boots are quick.
+#
+# Driven by pg_cron over HTTP (one POST per collector kind), so it sits at zero
+# machines between runs.
+
+app = 'aca-signal-engine'
+primary_region = 'iad'
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [http_service.concurrency]
+    type = 'requests'
+    hard_limit = 4
+    soft_limit = 2
+
+  # Without an explicit check, a wedged machine stays 'started' forever and the
+  # collectors go quiet with nothing reporting it — the aca-crawler 14h outage.
+  [[http_service.checks]]
+    interval = '30s'
+    timeout = '10s'
+    grace_period = '20s'
+    method = 'GET'
+    path = '/health'
+
+[[vm]]
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1

@@ -1,0 +1,20 @@
+{
+  "name": "aca-list-building-scraper",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@duckdb/node-api": "1.5.1-r.1",
+    "@supabase/supabase-js": "^2.81.1",
+    "playwright": "^1.42.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0",
+    "tsx": "^4.19.0"
+  }
+}

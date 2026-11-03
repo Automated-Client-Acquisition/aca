@@ -1,0 +1,4 @@
+from_name,from_email,user_name,password,smtp_host,smtp_port,imap_host,imap_port,max_email_per_day,warmup_enabled,signature
+John Doe,john@acme.com,john@acme.com,app_password_here,smtp.gmail.com,587,imap.gmail.com,993,50,TRUE,"<p>Best regards,<br>John Doe<br>Acme Inc.</p>"
+Jane Smith,jane@acme.com,jane@acme.com,app_password_here,smtp.gmail.com,587,imap.gmail.com,993,50,TRUE,"<p>Cheers,<br>Jane Smith<br>Head of Sales, Acme Inc.</p>"
+Sales Team,sales@company.io,sales@company.io,password123,smtp.zoho.com,587,imap.zoho.com,993,30,TRUE,

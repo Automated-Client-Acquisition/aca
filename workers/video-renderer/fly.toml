@@ -1,0 +1,17 @@
+app = "aca-video-renderer"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[http_service]
+  internal_port = 3000
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  idle_timeout = "15m"
+
+[[vm]]
+  cpu_kind = "performance"
+  cpus = 4
+  memory_mb = 16384

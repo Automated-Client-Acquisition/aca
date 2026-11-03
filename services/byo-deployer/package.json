@@ -1,0 +1,31 @@
+{
+  "name": "@aca/byo-deployer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "BYO email infrastructure deployer — SSHes into user-supplied servers and deploys Postfix/OpenDKIM/Dovecot via the infra_byo_jobs queue.",
+  "type": "module",
+  "engines": {
+    "node": ">=20.10.0"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node --enable-source-maps dist/index.js",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.0",
+    "@supabase/supabase-js": "^2.81.1",
+    "hono": "^4.6.0",
+    "node-ssh": "^13.2.0",
+    "pg": "^8.13.0",
+    "ssh2": "^1.16.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/pg": "^8.11.0",
+    "@types/ssh2": "^1.15.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0"
+  }
+}

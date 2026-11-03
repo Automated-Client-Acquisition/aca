@@ -1,0 +1,22 @@
+node_modules
+dist
+dist-ssr
+*.local
+*.log
+.DS_Store
+.idea
+.vscode/*
+!.vscode/extensions.json
+
+# Your settings and secrets
+.env
+.env.local
+.env.*.local
+supabase/.env*
+
+# Written by scripts/oss/configure-vercel.mjs from oss/vercel.template.json
+vercel.json
+
+# Supabase CLI state
+supabase/.branches
+supabase/.temp

@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Automated Client Acquisition" />
+
+    <!-- Default head for routes that are not prerendered (the app). Prerendered
+         pages replace everything between the seo-head markers with their own
+         title, description, canonical and og/twitter tags (scripts/prerender.mjs).
+         data-rh lets react-helmet-async take these over on client-side navigation
+         instead of leaving a second description/og set behind.
+         Link-preview scrapers (WhatsApp, LinkedIn, iMessage) read only this raw
+         HTML and need ABSOLUTE og/twitter image URLs. -->
+    <!--seo-head-->
+    <title data-rh="true">ACA - Automated Client Acquisition</title>
+    <meta data-rh="true" name="description" content="We attract or identify warm leads and nurture them until they buy or book. Outreach, content and AI agents in one machine. Bring your own keys." />
+
+    <meta data-rh="true" property="og:title" content="ACA - Automated Client Acquisition" />
+    <meta data-rh="true" property="og:description" content="We attract or identify warm leads and nurture them until they buy or book. Outreach, content and AI agents in one machine. Bring your own keys." />
+    <meta data-rh="true" property="og:type" content="website" />
+    <meta data-rh="true" property="og:url" content="https://www.automatedclientacquisition.com/" />
+    <meta data-rh="true" property="og:site_name" content="ACA" />
+    <meta data-rh="true" property="og:image" content="https://www.automatedclientacquisition.com/og-image-v2.png" />
+    <meta data-rh="true" property="og:image:width" content="1200" />
+    <meta data-rh="true" property="og:image:height" content="630" />
+
+    <meta data-rh="true" name="twitter:card" content="summary_large_image" />
+    <meta data-rh="true" name="twitter:site" content="@ACAXtreme" />
+    <meta data-rh="true" name="twitter:title" content="ACA - Automated Client Acquisition" />
+    <meta data-rh="true" name="twitter:description" content="We attract or identify warm leads and nurture them until they buy or book. Outreach, content and AI agents in one machine. Bring your own keys." />
+    <meta data-rh="true" name="twitter:image" content="https://www.automatedclientacquisition.com/og-image-v2.png" />
+    <meta data-rh="true" name="twitter:image:alt" content="Ember the ACA fox waving from a clay world of tiny workers, next to the ACA motto" />
+    <!--/seo-head-->
+
+    <!-- Apply theme before first paint to avoid flash -->
+    <script>
+      (function() {
+        var t = localStorage.getItem('theme') || 'system';
+        var dark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (dark) document.documentElement.classList.add('dark');
+      })();
+    </script>
+
+    <!-- Hide the crawler-only badge fallback (see <body>) before the first paint.
+         Applied from JS in <head> so the rule exists before that markup is even
+         parsed, without shipping a CSS display:none that static verifiers see. -->
+    <script>
+      (function() {
+        var s = document.createElement('style');
+        s.textContent = '#aca-directory-fallback{display:none!important}';
+        document.head.appendChild(s);
+      })();
+    </script>
+
+    <!-- Google Identity Services for OAuth -->
+    <script src="https://accounts.google.com/gsi/client" async></script>
+  </head>
+
+  <body>
+    <!-- Static fallback for directory verifiers that read only the raw HTML and
+         reject visually-hidden links (twelve.tools, wired.business). It sits INSIDE
+         #root, so React replaces it on mount, and the <head> script hides it before
+         first paint for real browsers. The visible, small version of these
+         badges lives in MarketingFooter (marketing pages only) and must never
+         appear in the authenticated app. -->
+    <div id="root"><!--ssr-outlet-->
+      <div id="aca-directory-fallback" aria-label="Directory listings">
+        <a href="https://marketingdb.live" target="_blank" rel="noopener noreferrer">
+          <img src="https://marketingdb.live/badge.svg" alt="Listed on MarketingDB" width="190" height="44" />
+        </a>
+        <a href="https://launch01.com/projects/automated-client-acquisition-aca?utm_source=badge" target="_blank" rel="noopener noreferrer">
+          <img src="https://r2.direasy-multi-tenant.focusapps.app/uploads/616d0b1a-3979-4b8c-94d1-b4f1fedd3ead/1782997254784/3uiqk91geh6/featured-on-light.svg" alt="Featured on Launch01" width="190" height="44" />
+        </a>
+        <a href="https://saashunt.best/projects/nurtureflow?utm_source=badge" target="_blank" rel="noopener noreferrer">
+          <img src="https://saashunt.best/images/badges/featured-on-light.svg" alt="Featured on SaasHunt" width="190" height="44" />
+        </a>
+        <a href="https://twelve.tools" target="_blank" rel="noopener noreferrer">
+          <img src="https://twelve.tools/badge0-white.svg" alt="Featured on Twelve Tools" width="148" height="40" />
+        </a>
+        <a href="https://wired.business" target="_blank" rel="noopener noreferrer">
+          <img src="https://wired.business/badge0-white.svg" alt="Featured on Wired Business" width="200" height="54" />
+        </a>
+        <a href="https://openhunts.com" target="_blank" title="OpenHunts Club">
+          <img alt="OpenHunts Club Member" height="105" src="https://cdn.openhunts.com/badges/club.webp" style="width: 195px; height: auto;" width="486" />
+        </a>
+        <a href="https://aitop10.tools/" target="_blank" rel="noopener noreferrer">AiTop10 Tools</a>
+        <a href="https://neeed.directory/products/aca-automated-client-acquisition?utm_source=aca-automated-client-acquisition" target="_blank" rel="noopener noreferrer">
+          <img src="https://neeed.directory/badges/neeed-badge-light.svg" alt="Featured on neeed.directory" width="139" height="20" />
+        </a>
+        <a href="https://indieai.directory/" target="_blank" rel="noopener">Listed on IndieAI Directory</a>
+        <a href="https://saasfame.com/item/automated-client-acquisition" target="_blank" rel="noopener noreferrer">
+          <img src="https://saasfame.com/badge-light.svg" alt="Featured on saasfame.com" style="height: 54px; width: auto;" />
+        </a>
+        <a href="https://newtools.site/item/automated-client-acquisition" target="_blank" rel="noopener noreferrer">
+          <img src="https://newtools.site/badges/newtool-light.png" alt="Featured on NewTools.site" height="54" width="auto" />
+        </a>
+        <a href="https://smollaunch.com" target="_blank" rel="noopener">
+          <img src="https://smollaunch.com/badges/featured.svg" alt="ACA: Automated Client Acquisition — Featured on Smol Launch" loading="lazy" width="250" height="60" />
+        </a>
+        <a href="https://www.launchvault.dev" target="_blank" title="Featured on LaunchVault">
+          <img src="https://www.launchvault.dev/images/badges/launch-valut-badge.svg" alt="Featured on LaunchVault" style="width: 195px; height: auto;" />
+        </a>
+        <a href="https://productfame.com" target="_blank" rel="noopener noreferrer">
+          <img src="https://productfame.com/badges/featured-light.svg" alt="Featured on ProductFame" width="245" height="54" />
+        </a>
+        <a href="https://launchstreak.dev/marketing/aca-automated-client-acquisition" target="_blank" rel="noopener">
+          <img src="https://launchstreak.dev/badge/launch-streak-badge-light.svg" alt="Launched on Launch Streak" width="248" height="68" />
+        </a>
+        <a href="https://codehype.ai/product/aca-client-acquisition?utm_source=codehype_badge" target="_blank" rel="noopener noreferrer">
+          <img src="https://codehype.ai/badges/aca-client-acquisition.svg?variant=find-us&v=20" alt="Featured on CodeHype" width="180" height="65" loading="lazy" decoding="async" style="display:inline-block;border:0;width:100%;max-width:180px;height:auto;max-height:65px;" />
+        </a>
+        <a href="https://fastlaunch.io" target="_blank" rel="noopener">
+          <img src="https://fastlaunch.io/images/badges/featured-dark.svg" alt="Featured on FastLaunch" width="221" height="60" />
+        </a>
+        <a href="https://aibesttop.com" target="_blank" rel="noopener noreferrer">
+          <img src="https://aibesttop.com/badges/light.svg" alt="Listed on AIBestTop" width="120" height="40" />
+        </a>
+        <a href="https://aihuntlist.com/tool/aca-client-acquisition" target="_blank" rel="noopener noreferrer">
+          <img src="https://aihuntlist.com/badge-light.svg" alt="Featured on aihuntlist.com" style="height: 54px; width: auto;" />
+        </a>
+        <a href="https://aiagentsdirectory.com/agent/aca-automated-client-acquisition" target="_blank" rel="noopener" title="Discover ACA: Automated Client Acquisition on AI Agents Directory">
+          <img src="https://aiagentsdirectory.com/featured-badge.svg?v=2024" alt="ACA: Automated Client Acquisition - Featured on AI Agents Directory" width="200" height="50" />
+        </a>
+        <a href="https://earlyhunt.com/project/aca-automated-client-acquisition" target="_blank" rel="noopener">
+          <img src="https://earlyhunt.com/badges/earlyhunt-badge-light.svg" alt="Featured on EarlyHunt" width="265" height="58" />
+        </a>
+        <a href="https://aitoolsmarketer.com/">
+          <img src="https://aitoolsmarketer.com/badges/badge-dark.svg" alt="Featured on AI Tools for Marketers" width="150" height="50" />
+        </a>
+        <a href="https://www.foundrlist.com/product/acaautomatedclientacquisition?utm_source=badge&amp;utm_medium=embed" target="_blank" rel="noopener">
+          <img src="https://www.foundrlist.com/api/badge/acaautomatedclientacquisition" alt="Featured on FoundrList" width="150" height="48" />
+        </a>
+        <a href="https://aitoolhunt.co/item/aca-client-acquisition" target="_blank" rel="noopener noreferrer">
+          <img src="https://aitoolhunt.co/badge-listed-light.svg" alt="Listed on AIToolHunt" style="height: 58px; width: auto;" />
+        </a>
+        <a href="https://ailaunch.space/" target="_blank" rel="noopener noreferrer" style="text-decoration: none; display: inline-block;">
+          <img src="https://ailaunch.space/assets/badges/featured.svg" alt="Featured on AILaunchSpace" width="225" height="61" style="display: block;" />
+        </a>
+        <a href="https://dang.ai" target="_blank" rel="dofollow noopener" style="display:inline-block;text-decoration:none;">
+          <img src="https://assets.dang.ai/badges/dang-verified-dark.png" alt="Verified on DANG!" width="260" height="94" style="display:block;width:260px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;" />
+        </a>
+        <a href="https://daniellaunches.com" target="_blank">
+          <img src="https://daniellaunches.com/badge-light.svg" alt="Featured on DanielLaunches" width="220" height="48" />
+        </a>
+        <a href="https://www.aitoolzdir.com" target="_blank">AI Toolz Dir</a>
+        <a href="https://dailypings.com/p/aca-automated-client-acquisition" target="_blank" rel="noopener" title="Featured on DailyPings">
+          <img src="https://dailypings.com/badge.svg" alt="Featured on DailyPings" width="179" height="32" />
+        </a>
+        <a href="https://collectai.tools/item/aca-automated-client-acq" target="_blank" rel="dofollow">
+          <img src="https://img.collectai.tools/badge-light.svg" alt="Listed on CollectAI" style="height: 54px; width: auto;" />
+        </a>
+        <a href="https://auraplusplus.com/projects/aca-automated-client-acquisition" target="_blank" rel="noopener" title="View this project on Aura++">
+          <img src="https://auraplusplus.com/images/badges/featured-on-light.svg" alt="Featured on Aura++" width="265" height="58" />
+        </a>
+        <a href="https://www.aitoolsaver.com" target="_blank" rel="noopener noreferrer">
+          <img src="https://www.aitoolsaver.com/images/badges/featured-on-aitoolsaver-badge-brand-wide.svg" alt="Featured on AiToolSaver" width="320" height="80" />
+        </a>
+        <a href="https://www.toolpilot.ai" target="_blank" rel="noopener noreferrer">
+          <img src="https://www.toolpilot.ai/cdn/shop/files/f-w_690x151_crop_center.png" alt="Featured on ToolPilot" />
+        </a>
+        <a href="https://uno.directory" target="_blank" rel="noopener">
+          <img src="https://uno.directory/uno-directory.svg" alt="Listed on Uno Directory" width="120" height="30" />
+        </a>
+        <a href="https://sumodir.com" target="_blank" rel="dofollow">
+          <img src="https://sumodir.com/badge.png" alt="Featured on SumoDir" width="200" height="54" />
+        </a>
+        <a href="https://www.vibe-coding.cloud/" rel="nofollow" title="Listed on Vibe Coding — AI tools directory">
+          <img src="https://www.vibe-coding.cloud/vibe-coding-badge.svg" alt="Listed on Vibe Coding — AI tools directory" width="240" height="60" />
+        </a>
+        <a target="_blank" href="https://goodaitools.com/ai/automatedclientacquisition" rel="noopener noreferrer">
+          <img src="https://goodaitools.com/assets/images/badge.png" alt="Good AI Tools" height="54" loading="lazy" />
+        </a>
+        <a href="https://dododirectory.com" target="_blank" rel="dofollow"><img src="https://dododirectory.com/badge-light.png" alt="Featured on DodoDirectory" width="200" height="54" /></a>
+        <a href="https://saasbison.com" target="_blank" rel="dofollow"><img src="https://saasbison.com/badge.png" alt="Featured on SaaSBison" width="200" height="54" /></a>
+        <a href="https://saasgrow.app?ref=automatedclientacquisition.com" target="_blank" rel="noopener"><img src="https://saasgrow.app/api/badge?type=featured&style=light" alt="ACA: Automated Client Acquisition on SaaSGrow" width="240" height="54" /></a>
+        <a target="_blank" href="https://mylaunchstash.com/product/automatedclientacquisition"><img src="https://mylaunchstash.com/assets/images/badge.png" alt="My Launch Stash" height="54" loading="lazy"></a>
+        <a href="https://bowora.com/?via=u02phdhc" target="_blank">Bowora</a>
+        <a href="https://indiehunt.io/project/aca-automated-client-acquisition" target="_blank" rel="noopener"><img src="https://indiehunt.io/badges/indiehunt-badge-light.svg" alt="Featured on IndieHunt" width="265" height="58" /></a>
+        <a target="_blank" href="https://launchclash.com/product/automatedclientacquisition"><img src="https://launchclash.com/assets/images/badge.png" alt="LaunchClash" height="54" loading="lazy"></a>
+        <a href="https://huzzler.so/products/4UDtvfHUhG/aca-automated-client-acquisition?utm_source=huzzler_product_website&utm_medium=badge&utm_campaign=free_listing" target="_blank" rel="noopener noreferrer"><img alt="Huzzler Embed Badge" src="https://huzzler.so/assets/images/embeddable-badges/featured.png" width="159" height="55" /></a>
+        <a href='https://aitooltrek.com'>AI Tool Trek</a>
+<a href='https://aihustle.tools'>AI Hustle</a>
+<a href='https://showmebest.ai'>ShowMeBest</a>
+<a href='https://www.startupfa.st'>Startup Fast</a>
+<a href='https://kickproduct.com/products/6ab634972c148fdc117212c1'><img src='https://www.kickproduct.com/listedbadge.png' alt='Listed on Kick Product' width='32'></a>
+<a href='https://webspot.app'><img src='https://webspot.app/featured-light.svg' alt='Featured on Webspot' width='32'></a>
+<a href='https://thedevtoolsdir.com/product/aca-automated-client-acquisition?ref=badge' rel='dofollow'><img src='https://thedevtoolsdir.com/badge/aca-automated-client-acquisition.svg' alt='Featured on TheDevToolsDir' width='32'></a>
+<a href='https://www.stork.ai/'><img src='https://www.stork.ai/badge/verified-light.svg' alt='Stork Verified' width='32'></a>
+<a href='https://saascity.io'><img src='https://saascity.io/badges/featured-dark.svg' alt='Featured on SaaSCity' width='32'></a>
+<a href='https://postmake.io/submit'><img src='https://postmake.io/postmake_badge_dark.png' alt='Featured on the Postmake directory' width='32'></a>
+<a href='https://turbo0.com/item/aca-automated-acquisition'><img src='https://img.turbo0.com/badge-listed-light.svg' alt='Listed on Turbo0' width='32'></a><a href='https://www.scrolllaunch.com/products/aca-automated-client-acquisition?ref=badge' target='_blank' rel='noopener'><img src='https://www.scrolllaunch.com/api/badge/aca-automated-client-acquisition?variant=featured&theme=light' alt='ACA: Automated Client Acquisition - Featured on ScrollLaunch' width='32'></a><a target='_blank' href='https://shinylaunch.com/product/automatedclientacquisition'><img src='https://shinylaunch.com/assets/images/badge.png' alt='ShinyLaunch' width='32'></a><a target='_blank' rel='noopener' href='https://confettisaas.com/saas/automatedclientacquisition-com-2?ref=badge'><img src='https://confettisaas.com/badge-light.svg' alt='ACA: Automated Client Acquisition on ConfettiSaaS' width='32'></a><a target='_blank' rel='noopener noreferrer' href='https://toolfame.com/item/aca-automated-client-acquisition'><img src='https://toolfame.com/badge-light.svg' alt='Featured on toolfame.com' width='32'></a><a target='_blank' rel='noopener' href='https://startuptrusted.com?ref=automatedclientacquisition.com'><img src='https://startuptrusted.com/api/badge?type=featured&style=light' alt='ACA: Automated Client Acquisition' width='32'></a><a target='_blank' rel='noopener' href='https://tooldirs.com'><img src='https://tooldirs.com/badge/badge_dark.svg' alt='Featured on ToolDirs' width='32'></a><a target='_blank' rel='noopener' href='https://dofollow.tools'><img src='https://dofollow.tools/badge/badge_dark.svg' alt='Featured on Dofollow.Tools' width='32'></a><a href='https://siteefy.com/tools/aca-automated-client-acquisition?utm_source=owner_badge' rel='nofollow'><img src='https://siteefy.com/api/public/badge/aca-automated-client-acquisition?type=featured' alt='ACA: Automated Client Acquisition on Siteefy' width='32'></a>
+        <a href="https://navfolders.com" target="_blank" rel="dofollow">Navfolders</a>
+      </div>
+    <!--/ssr-outlet--></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+# fly.toml — IMAP Poller Worker (always-on background process)
+
+app = 'aca-imap-poller'
+primary_region = 'iad'
+
+[build]
+
+# Exposes port 8080 publicly so the graph-mail-webhook Supabase edge function
+# (which runs outside Fly's network entirely) can forward a real-time poke to
+# /webhook-poll. Every route on this port is now internet-reachable — see the
+# isAuthorizedInternalRequest() gate in index.ts on /webhook-poll, /backfill,
+# and /connections. min_machines_running=1 because this is a persistent
+# process (IMAP IDLE connections), not something that should scale to zero.
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
+
+[checks]
+  [checks.health]
+    port = 8080
+    type = "http"
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
+    method = "GET"
+    path = "/health"
+
+# Bumped from 1 shared vCPU / 1GB (2026-09-04): under sustained real-time
+# webhook load (~1,900 subscribed mailboxes, 4-22 pokes/min observed), the
+# single vCPU was a real bottleneck — see WEBHOOK_POLL_CONCURRENCY queue in
+# index.ts for the other half of this fix (bounded concurrency + visibility).
+# More headroom here reduces how often that queue actually has to wait.
+[[vm]]
+  memory = '2gb'
+  cpu_kind = 'shared'
+  cpus = 2
+  memory_mb = 2048

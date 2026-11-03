@@ -1,0 +1,102 @@
+import { STUDIO, SKOOL_URL } from "./sprintConfig";
+import "@/styles/aca-home.css";
+import "@/styles/sprint-funnel.css";
+import "@/styles/marketing-specialized.css";
+
+// Studio funnel thank-you page. No pitch - momentum. The Kit's promise is
+// "producing today", so every step here pushes toward an installed agent and a
+// first month of videos within the hour.
+export default function StudioWelcome() {
+  return (
+    <div className="sf">
+      <div className="sf__bar">
+        Welcome - let's get your agent <b>writing today</b>
+      </div>
+
+      <main className="sf__letter sf__wrap">
+        <header className="sf__head sf__head--light" style={{ paddingBottom: 0 }}>
+          <div className="sf__prehead">Order confirmed</div>
+          <h1 className="sf__h1" style={{ fontSize: "clamp(28px,5vw,42px)" }}>
+            You're in. Your agent can be live within the hour.
+          </h1>
+          <p className="sf__sub">Four steps. Don't save them for the weekend - momentum is the whole game.</p>
+        </header>
+
+        <img
+          className="sf__shot"
+          src="/studio/studio-bundle.jpg"
+          alt="Your Faceless Channel Kit: the agent, the playbook, the walkthrough, both bonuses, and 30 days of ACA Xtreme - all yours now"
+          decoding="async"
+          style={{ marginTop: 22 }}
+        />
+
+        <div style={{ marginTop: 26 }}>
+          <div className="sf__step">
+            <span className="sf__step-n">1</span>
+            <div>
+              <h4>Open your confirmation email</h4>
+              <p>
+                Your Kit, the install walkthrough, and your ACA login are inside. Not there in 5
+                minutes? Check spam/promotions, then email us and we'll sort it.
+              </p>
+            </div>
+          </div>
+          <div className="sf__step">
+            <span className="sf__step-n">2</span>
+            <div>
+              <h4>Do the 30-minute install now</h4>
+              <p>
+                Follow the walkthrough top to bottom - it sets up Hermes Agent (the free, open-source
+                runtime your agent lives in) and then your agent, copy-paste, done. The single biggest
+                predictor of who makes money with this: installing today instead of "this weekend."
+              </p>
+            </div>
+          </div>
+          <div className="sf__step">
+            <span className="sf__step-n">3</span>
+            <div>
+              <h4>Run your first niche</h4>
+              <p>
+                Point the agent at one niche and let it write your first month of videos today - your
+                proof calendar. The First 1,000 Subscribers Playbook shows you exactly what to do with
+                it, whether you're posting to your own channel or offering a business a sample.
+              </p>
+            </div>
+          </div>
+          <div className="sf__step">
+            <span className="sf__step-n">4</span>
+            <div>
+              <h4>Post your win in the community</h4>
+              <p>
+                Your 30 days of ACA Xtreme start now - <a href={SKOOL_URL} target="_blank" rel="noopener noreferrer">join here</a>,
+                introduce yourself, and post your first content calendar. The weekly live builds are
+                where your one agent becomes a stack.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="sf__guarantee" style={{ marginTop: 30 }}>
+          <h3>Remember the deal</h3>
+          <p>
+            30 days, keep-everything guarantee. The only way to lose here is to let the Kit sit in your
+            inbox. Install it today - future you says thanks.
+          </p>
+        </div>
+
+        <div className="sf__disclose">
+          <b>Billing reminder (no surprises):</b> your Kit included 30 days of ACA Xtreme. It renews at
+          ${STUDIO.renewalPrice}/month after - cancel anytime in one click from your account. Your
+          receipt lists everything you bought today.
+        </div>
+      </main>
+
+      <footer className="sf__foot">
+        <div className="sf__wrap">
+          © {new Date().getFullYear()} Automated Client Acquisition · <a href="/privacy">Privacy</a> ·{" "}
+          <a href="/terms">Terms</a>
+        </div>
+      </footer>
+    </div>
+  );
+}
