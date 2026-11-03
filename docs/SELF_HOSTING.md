@@ -5,7 +5,7 @@ functions that hold the business logic) and Node workers for the long jobs (send
 rendering). This guide sets up all three.
 
 Self-hosting is supported by the community through GitHub
-[discussions](https://github.com/seguelaCedric/aca/discussions) and issues. If you'd rather not
+[discussions](https://github.com/Automated-Client-Acquisition/aca/discussions) and issues. If you'd rather not
 run it, [ACA Cloud](https://www.automatedclientacquisition.com) is $67 a month and includes support.
 
 ## What you need
@@ -20,7 +20,7 @@ run it, [ACA Cloud](https://www.automatedclientacquisition.com) is $67 a month a
   WhatsApp and Telegram, a Unipile account
 
 ```bash
-git clone https://github.com/seguelaCedric/aca.git
+git clone https://github.com/Automated-Client-Acquisition/aca.git
 cd aca
 npm ci
 cp .env.example .env

@@ -222,7 +222,7 @@ app and the background workers with Docker Compose. The full guide is
 - A domain for the app
 
 ```bash
-git clone https://github.com/seguelaCedric/aca.git && cd aca
+git clone https://github.com/Automated-Client-Acquisition/aca.git && cd aca
 npm ci && cp .env.example .env
 supabase link --project-ref <ref> && supabase db push
 docker compose --profile outreach up -d
