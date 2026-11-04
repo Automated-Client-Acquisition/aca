@@ -137,7 +137,7 @@ export const apiKeySchema = z.object({
     // Data & scraping
     'apify', 'youtube',
     // CRM & social
-    'leadconnector', 'unipile',
+    'leadconnector', 'unipile', 'zernio',
     // Contact enrichment
     'apollo', 'hunter', 'prospeo', 'moltsets', 'quickenrich',
     // Email infrastructure

@@ -449,7 +449,7 @@ const workflowCapabilities = [
   {
     icon: Sparkles,
     title: "Put ideas into production",
-    body: "Create ideas and blueprints, start content generation and check job progress.",
+    body: "Create ideas and blueprints, draft posts into the best free slots on your calendar and see how published posts performed.",
   },
   {
     icon: FileText,

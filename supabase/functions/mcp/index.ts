@@ -12,6 +12,20 @@ import { addContactsToList as addContactsToListShared } from '../_shared/list-me
 import { mergeAgentAnalysis, withDraftPoints } from '../_shared/idea-guidelines.ts';
 import { calculateNextRun, type AutopilotSchedule, type ScheduleSlot } from '../_shared/autopilot-schedule.ts';
 import { poolQueryWorkerUrl } from "../_shared/site-config.ts";
+import {
+  approveSchedulerPosts,
+  connectSchedulerAccount,
+  createSchedulerPost,
+  deleteSchedulerPost,
+  getSchedulerPost,
+  getSchedulerPostStats,
+  listSchedulerAccounts,
+  listSchedulerPosts,
+  planSchedulerPosts,
+  publishSchedulerPostNow,
+  retrySchedulerPost,
+  updateSchedulerPost,
+} from "../_shared/scheduler-api.ts";
 
 // Carousel themes the template renderer draws (workers/carousel-renderer/src/carousel-themes.ts).
 const CAROUSEL_THEMES = ["creator", "editorial", "noir", "halftone", "brutalist", "spotlight"];
@@ -799,7 +813,12 @@ Welcome! This MCP (Model Context Protocol) server lets you manage your ACA accou
 - Publish to GHL social media accounts and WordPress sites
 - Evergreen recycling for high-performing content
 
-Use \`get_help\` with topics: "ideas", "library", "content_generation", "blueprints", "organizations", "campaigns", "autopilots", "linkedin_import", or "all"
+### 📅 Social Scheduler
+- One calendar for every post: by you, your autopilots and the scheduling agent
+- Schedule, reschedule, approve, publish now, retry; see reach and engagement once posted
+- Posts through the org's own Zernio key (Instagram, Facebook, TikTok…), native LinkedIn, GHL or X
+
+Use \`get_help\` with topics: "ideas", "library", "content_generation", "blueprints", "organizations", "campaigns", "autopilots", "scheduler", "linkedin_import", or "all"
 `,
 
     ideas: `
@@ -1564,6 +1583,42 @@ Auto-repost published content after a cooldown. Configure min_age_days, max_repo
 4. list_publishing_accounts() → Find Instagram account (id: ghl-789, platform: "instagram")
 5. create_autopilot with name, content_mix, frequency, destinations
 6. trigger_autopilot to run immediately, or wait for scheduled run
+`,
+    scheduler: `
+# 📅 Social Scheduler
+
+Every post across the organization's channels on one calendar (the app's /scheduler page).
+A post goes to one or more accounts; each account gets its own destination row.
+
+## Accounts
+- \`list_scheduler_accounts\`: where you can post. provider = zernio (the org's own Zernio key:
+  Instagram, Facebook, TikTok, YouTube, Google Business, Threads, Pinterest, X), linkedin_native,
+  ghl or x. A GHL copy of an account also connected through Zernio is hidden so nothing posts twice.
+- \`connect_social_account\`: a sign-in link for a new account (needs a Zernio API key in Settings).
+
+## Posts
+- \`list_scheduled_posts\`: the calendar for a window (default: last 7 days to next 30), filter by status
+  (draft, scheduled, publishing, published, failed) or platform.
+- \`get_scheduled_post\`: one post with every destination, error and stats.
+- \`schedule_post\`: create. Give accounts, caption (or captions per platform), images or one video
+  (public https URLs), and scheduled_for (ISO 8601) or publish_now. status: "draft" saves it for review.
+  Instagram, TikTok, YouTube and Pinterest need a picture or video; the call refuses a post that would fail.
+- \`update_scheduled_post\`: reschedule or edit until it goes out (also moves a failed post back in the queue).
+- \`delete_scheduled_post\`, \`publish_post_now\`, \`retry_scheduled_post\`.
+- \`approve_scheduled_posts\`: drafts and agent proposals → scheduled.
+
+## Agent
+- \`plan_social_posts\`: the scheduling agent writes draft proposals into free, high-engagement slots,
+  using the brand voice, the idea bank and what performed before. Review, add visuals, then approve.
+
+## Stats
+- \`get_post_stats\`: reach, impressions, likes, comments, shares, saves, engagement rate and their history,
+  for posts published through Zernio. refresh: true reads the platform now.
+
+## Typical flow
+1. list_scheduler_accounts → pick account ids
+2. schedule_post { accounts, caption, images, scheduled_for }
+3. later: get_post_stats { id }
 `
   };
 
@@ -10682,8 +10737,8 @@ const TOOL_DEFINITIONS = {
       properties: {
         topic: {
           type: "string",
-          enum: ["overview", "ideas", "library", "content_generation", "blueprints", "organizations", "campaigns", "autopilots", "all"],
-          description: "Help topic: overview (start here), ideas, library, content_generation, blueprints, organizations, campaigns (outreach sequences), or all"
+          enum: ["overview", "ideas", "library", "content_generation", "blueprints", "organizations", "campaigns", "autopilots", "scheduler", "all"],
+          description: "Help topic: overview (start here), ideas, library, content_generation, blueprints, organizations, campaigns (outreach sequences), autopilots, scheduler (social posting calendar), or all"
         },
       },
     },
@@ -11875,6 +11930,136 @@ const TOOL_DEFINITIONS = {
         },
       },
       required: ["autopilot_id", "status"],
+    },
+  },
+
+  // Social Scheduler (shared with mcp-v1 and /v1/scheduler: _shared/scheduler-api.ts)
+  list_scheduler_accounts: {
+    description:
+      "📅 List every social account the Social Scheduler can post to: the org's own Zernio accounts (Instagram, Facebook, TikTok, YouTube, Google Business, Threads, Pinterest, X), native LinkedIn, GHL and X. Returns id, platform, name, username and provider. Use the ids with schedule_post.",
+    inputSchema: { type: "object", properties: {} },
+  },
+  list_scheduled_posts: {
+    description:
+      "📅 The Social Scheduler calendar: posts in a window (default last 7 days to next 30), soonest first, each with its destinations, status and stats. Filter by status or platform.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        from: { type: "string", description: "Start, ISO 8601 (default: 7 days ago)" },
+        to: { type: "string", description: "End, ISO 8601 (default: 30 days ahead; at most 120 days after from)" },
+        status: { type: "string", description: "Comma-separated: draft, scheduled, publishing, published, failed" },
+        platform: { type: "string", description: "instagram, facebook, linkedin, tiktok, youtube, google, twitter, threads, pinterest" },
+        limit: { type: "number", description: "Max posts (default 50, max 200)" },
+      },
+    },
+  },
+  get_scheduled_post: {
+    description: "📅 One Scheduler post: caption per platform, media, time, every destination with its status or error, and stats once published.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", description: "Post id from list_scheduled_posts" },
+        include_history: { type: "boolean", description: "Include the stats history (default false)" },
+      },
+      required: ["id"],
+    },
+  },
+  schedule_post: {
+    description:
+      "📅 Schedule a social post on one or more accounts (or save it as a draft). Refuses a post that would fail on a platform (e.g. Instagram with no picture, X over 280 characters) unless status is draft. Media must be public https URLs. Goes out through the process-publish-queue worker at scheduled_for (or within 5 minutes with publish_now).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        accounts: { type: "array", items: { type: "string" }, description: "Account ids from list_scheduler_accounts" },
+        caption: { type: "string", description: "The text, used on every platform without its own caption" },
+        captions: { type: "object", description: "Per-platform text, e.g. {\"linkedin\": \"…\", \"twitter\": \"…\"}" },
+        images: { type: "array", items: { type: "string" }, description: "Picture URLs (https), in order; several make a carousel where the platform supports it" },
+        video: { type: "string", description: "One video URL (https), instead of pictures" },
+        first_comment: { type: "string", description: "Posted as the first comment (LinkedIn, Facebook, Instagram)" },
+        format: { type: "string", enum: ["feed", "story"], description: "story posts Instagram/Facebook as a Story (default feed)" },
+        scheduled_for: { type: "string", description: "When, ISO 8601 with timezone" },
+        publish_now: { type: "boolean", description: "Post at the next queue run (within 5 minutes) instead of scheduled_for" },
+        status: { type: "string", enum: ["scheduled", "draft"], description: "draft saves it for review without publishing (default scheduled)" },
+        title: { type: "string", description: "Internal label" },
+      },
+      required: ["accounts"],
+    },
+  },
+  update_scheduled_post: {
+    description:
+      "📅 Edit or reschedule a post that hasn't gone out: time, caption(s), media, first comment, format, accounts (replaces the set) or draft/scheduled. A failed post moved to a new time is retried.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        id: { type: "string", description: "Post id" },
+        scheduled_for: { type: "string", description: "New time, ISO 8601" },
+        publish_now: { type: "boolean" },
+        caption: { type: "string" },
+        captions: { type: "object" },
+        images: { type: "array", items: { type: "string" } },
+        video: { type: "string" },
+        first_comment: { type: "string" },
+        format: { type: "string", enum: ["feed", "story"] },
+        accounts: { type: "array", items: { type: "string" }, description: "Replaces the accounts" },
+        status: { type: "string", enum: ["scheduled", "draft"] },
+      },
+      required: ["id"],
+    },
+  },
+  delete_scheduled_post: {
+    description: "📅 Remove a post that hasn't gone out. Destinations already published stay as the record.",
+    inputSchema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] },
+  },
+  approve_scheduled_posts: {
+    description:
+      "📅 Approve drafts and agent proposals so they go out at their time. A past time moves to 5 minutes from now (90 minutes apart per account). A draft that would fail stays a draft and is listed in blocked.",
+    inputSchema: {
+      type: "object",
+      properties: { ids: { type: "array", items: { type: "string" }, description: "Post ids (max 50)" } },
+      required: ["ids"],
+    },
+  },
+  publish_post_now: {
+    description: "📅 Publish a draft or scheduled post at the next queue run (within 5 minutes).",
+    inputSchema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] },
+  },
+  retry_scheduled_post: {
+    description: "📅 Put a post's failed destinations back in the queue now. Check its error first with get_scheduled_post.",
+    inputSchema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] },
+  },
+  plan_social_posts: {
+    description:
+      "🤖 The scheduling agent drafts posts into the best free slots for the chosen accounts, in the brand voice, from the idea bank, leaning into what performed before. Creates drafts for review: add visuals where a platform needs one, then approve_scheduled_posts. Takes up to ~2 minutes.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        instruction: { type: "string", description: "The brief, e.g. \"5 LinkedIn posts next week about our new feature\"" },
+        accounts: { type: "array", items: { type: "string" }, description: "Account ids (default: every account)" },
+        range_start: { type: "string", description: "ISO 8601 (default now)" },
+        range_end: { type: "string", description: "ISO 8601 (default 7 days ahead)" },
+        timezone: { type: "string", description: "IANA timezone for slots, e.g. Europe/Paris (default UTC)" },
+        brand_voice_id: { type: "string" },
+        product_id: { type: "string" },
+      },
+      required: ["instruction"],
+    },
+  },
+  get_post_stats: {
+    description:
+      "📊 How a published post did: reach, impressions, likes, comments, shares, saves, views, engagement rate, per account and over time. For posts published through Zernio. refresh reads the platform now.",
+    inputSchema: {
+      type: "object",
+      properties: { id: { type: "string", description: "Post id" }, refresh: { type: "boolean" } },
+      required: ["id"],
+    },
+  },
+  connect_social_account: {
+    description:
+      "🔗 A sign-in link that connects a social account to the Scheduler through the org's Zernio key (Instagram, Facebook, TikTok, YouTube, Google Business, Threads, Pinterest, X). LinkedIn links to Settings › Senders. Give the link to the user to open.",
+    inputSchema: {
+      type: "object",
+      properties: { platform: { type: "string", enum: ["instagram", "facebook", "tiktok", "youtube", "google", "threads", "pinterest", "twitter", "linkedin"] } },
+      required: ["platform"],
     },
   },
 
@@ -14508,6 +14693,43 @@ async function handleMcpRequest(
             break;
           case "toggle_autopilot_status":
             result = await toggleAutopilotStatus(supabase, ctx, toolArgs);
+            break;
+          // Social Scheduler
+          case "list_scheduler_accounts":
+            result = await listSchedulerAccounts(supabase, getEffectiveOrgId(ctx));
+            break;
+          case "list_scheduled_posts":
+            result = await listSchedulerPosts(supabase, getEffectiveOrgId(ctx), toolArgs);
+            break;
+          case "get_scheduled_post":
+            result = await getSchedulerPost(supabase, getEffectiveOrgId(ctx), toolArgs.id, { history: toolArgs.include_history === true });
+            break;
+          case "schedule_post":
+            result = await createSchedulerPost(supabase, getEffectiveOrgId(ctx), toolArgs, ctx.userId || null);
+            break;
+          case "update_scheduled_post":
+            result = await updateSchedulerPost(supabase, getEffectiveOrgId(ctx), toolArgs.id, toolArgs);
+            break;
+          case "delete_scheduled_post":
+            result = await deleteSchedulerPost(supabase, getEffectiveOrgId(ctx), toolArgs.id);
+            break;
+          case "approve_scheduled_posts":
+            result = await approveSchedulerPosts(supabase, getEffectiveOrgId(ctx), toolArgs.ids);
+            break;
+          case "publish_post_now":
+            result = await publishSchedulerPostNow(supabase, getEffectiveOrgId(ctx), toolArgs.id);
+            break;
+          case "retry_scheduled_post":
+            result = await retrySchedulerPost(supabase, getEffectiveOrgId(ctx), toolArgs.id);
+            break;
+          case "plan_social_posts":
+            result = await planSchedulerPosts(supabase, getEffectiveOrgId(ctx), toolArgs);
+            break;
+          case "get_post_stats":
+            result = await getSchedulerPostStats(supabase, getEffectiveOrgId(ctx), toolArgs.id, { refresh: toolArgs.refresh === true });
+            break;
+          case "connect_social_account":
+            result = await connectSchedulerAccount(getEffectiveOrgId(ctx), toolArgs.platform);
             break;
           case "list_publishing_accounts":
             result = await listPublishingAccounts(supabase, ctx, toolArgs);

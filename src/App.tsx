@@ -36,7 +36,7 @@ const Create = lazy(() => import("./pages/Create"));
 const Jobs = lazy(() => import("./pages/Jobs"));
 const JobDetail = lazy(() => import("./pages/JobDetail"));
 const SavedContent = lazy(() => import("./pages/SavedContent"));
-const PublishQueue = lazy(() => import("./pages/PublishQueue"));
+const Scheduler = lazy(() => import("./pages/Scheduler"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -59,6 +59,7 @@ const Support = lazy(() => import("./pages/Support"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const GithubAccess = lazy(() => import("./pages/GithubAccess"));
 const ConnectComplete = lazy(() => import("./pages/ConnectComplete"));
+const ZernioConnectComplete = lazy(() => import("./pages/ZernioConnectComplete"));
 const EmailMailboxDetail = lazy(() => import("./pages/EmailMailboxDetail"));
 const EmailSequences = lazy(() => import("./pages/EmailSequences"));
 const EmailSequenceBuilder = lazy(() => import("./pages/EmailSequenceBuilder"));
@@ -400,13 +401,15 @@ function AuthRoutes() {
           }
         />
         <Route
-          path="/publish-queue"
+          path="/scheduler"
           element={
             <ProtectedRoute>
-              <PublishQueue />
+              <Scheduler />
             </ProtectedRoute>
           }
         />
+        {/* The Scheduler replaced the publish queue page. */}
+        <Route path="/publish-queue" element={<Navigate to="/scheduler?view=list" replace />} />
         {/* Lead Magnets (Inbound lead capture) - Primary route */}
         <Route
           path="/lead-magnets"
@@ -875,6 +878,8 @@ const App = ({ Router = BrowserRouter, routerProps, client = queryClient }: AppP
             <Route path="/access-cedric-github" element={<GithubAccess />} />
             {/* Unipile hosted-auth popup result (redirected from the auth callbacks) */}
             <Route path="/connect/complete" element={<ConnectComplete />} />
+            {/* Zernio hosted sign-in result (redirect_url set by zernio-connect) */}
+            <Route path="/connect/zernio" element={<ZernioConnectComplete />} />
 
             {/* Marketing pages (slim) */}
             <Route path="/pricing" element={<Suspense fallback={<div style={{ minHeight: "100vh" }} />}><Pricing /></Suspense>} />

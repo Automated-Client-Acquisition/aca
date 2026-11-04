@@ -1,17 +1,15 @@
 import { NavLink } from "react-router-dom";
-import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { cn } from "@/lib/utils";
 
 /**
- * One "Content" place for everything that's been made: runs (jobs), saved
- * pieces and the publish queue. Rendered at the top of each of those pages.
+ * One "Content" place for everything that's been made: runs (jobs) and saved
+ * pieces. Rendered at the top of each of those pages. Scheduled posts live in
+ * the Scheduler (/scheduler), which has its own sidebar item.
  */
 export function ContentTabs() {
-  const { hasFeature, showUpgradePrompts } = useFeatureAccess();
   const tabs = [
     { href: "/jobs", label: "Runs" },
     { href: "/saved", label: "Saved" },
-    ...(hasFeature("publishing") || showUpgradePrompts ? [{ href: "/publish-queue", label: "Scheduled" }] : []),
   ];
   return (
     <nav aria-label="Content" className="mb-6 flex gap-1 border-b">

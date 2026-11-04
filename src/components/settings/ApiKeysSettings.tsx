@@ -39,6 +39,7 @@ const PROVIDER_API_KEY_URLS: Record<string, string> = {
   heygen: "https://app.heygen.com/settings/api",
   mailtester_ninja: "https://mailtester.ninja/",
   quickenrich: "https://app.quickenrich.io/docs",
+  zernio: "https://zernio.com/dashboard/api-keys",
 };
 
 const PROVIDER_LABELS: Record<string, string> = {
@@ -57,6 +58,7 @@ const PROVIDER_LABELS: Record<string, string> = {
   gohighlevel: "GoHighLevel",
   unipile: "Unipile (Leads)",
   unipile_v2: "Unipile v2",
+  zernio: "Zernio (Social Publishing)",
   // Contact Enrichment
   apollo: "Apollo.io (Enrichment)",
   prospeo: "Prospeo (Email Finder)",

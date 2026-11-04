@@ -95,6 +95,9 @@ serve(async (req) => {
       case 'unipile':
         result = await validateUnipile(apiKey, dsnUrl);
         break;
+      case 'zernio':
+        result = await validateZernio(apiKey);
+        break;
       // Contact enrichment providers
       case 'apollo':
         result = await validateApollo(apiKey);
@@ -619,6 +622,27 @@ async function validateProspeo(apiKey: string) {
   } catch (error) {
     console.error('Prospeo validation error:', error);
     return { valid: false, error: error instanceof Error ? error.message : 'Connection failed' };
+  }
+}
+
+async function validateZernio(apiKey: string) {
+  try {
+    // Listing accounts is free and needs only a valid key (sk_ + 64 hex). The count tells the
+    // person whether they still have to connect accounts in Zernio.
+    const response = await fetch('https://zernio.com/api/v1/accounts?status=connected&excludeHidden=true', {
+      headers: { 'Authorization': `Bearer ${apiKey}` },
+    });
+    if (response.status === 401 || response.status === 403) {
+      return { valid: false, error: 'Invalid Zernio API key' };
+    }
+    if (!response.ok) {
+      return { valid: false, error: `Zernio API error: ${response.status}` };
+    }
+    const data = await response.json().catch(() => ({}));
+    const accounts = Array.isArray(data?.accounts) ? data.accounts.length : 0;
+    return { valid: true, accounts };
+  } catch (error) {
+    return { valid: false, error: error instanceof Error ? error.message : 'Could not reach Zernio' };
   }
 }
 

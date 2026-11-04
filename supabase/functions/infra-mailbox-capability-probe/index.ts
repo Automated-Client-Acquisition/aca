@@ -191,6 +191,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
   let benched = 0;
   let released = 0;
+  const releasedMailboxIds: string[] = [];
 
   // Key-scoped writes — never read-modify-write the whole metadata blob.
   for (let i = 0; i < results.length; i += CONCURRENCY) {
@@ -227,6 +228,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
           .update({ status: 'ready', last_error: null, updated_at: now })
           .eq('id', r.id).eq('status', 'paused');
         released++;
+        releasedMailboxIds.push(r.id);
       } else {
         await supabase.rpc('apply_mailbox_metadata_patch', {
           p_id: r.id,
@@ -235,6 +237,24 @@ Deno.serve(async (req: Request): Promise<Response> => {
         });
       }
     }));
+  }
+
+  // A domain probed while its tenant could not send reads "No health evidence"
+  // until its next scheduled probe. Now that its mailboxes can send again, make
+  // it due so the next probe run measures it instead of waiting out the cadence.
+  if (releasedMailboxIds.length) {
+    const { data: freed } = await supabase
+      .from('email_mailboxes')
+      .select('sending_domain_id')
+      .in('id', releasedMailboxIds);
+    const domainIds = [...new Set((freed ?? []).map((m) => m.sending_domain_id as string).filter(Boolean))];
+    if (domainIds.length) {
+      await supabase
+        .from('email_sending_domains')
+        .update({ next_probe_at: new Date().toISOString() })
+        .in('id', domainIds)
+        .in('health_status', ['unknown']);
+    }
   }
 
   return new Response(JSON.stringify({

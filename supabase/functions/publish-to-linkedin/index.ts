@@ -4,7 +4,11 @@ import { unauthorized } from '../_shared/cli-auth.ts';
 import { checkFeatureAccess } from '../_shared/featureAccess.ts';
 import { createUnipileClientFromAccount, parseUnipileError } from '../_shared/unipile-client.ts';
 import { parseLinkedInDestination, assertLinkedInPageAccess, LinkedInIdentityError } from '../_shared/linkedin-identity.ts';
-import { buildLinkedInContent, normalizeLinkedInContent, publishLinkedInPost, LinkedInPublishValidationError } from '../_shared/linkedin-publishing.ts';
+import { buildLinkedInContent, normalizeLinkedInContent, publishLinkedInPost, LinkedInPublishValidationError, type LinkedInPublishResult } from '../_shared/linkedin-publishing.ts';
+import { UnipileV2Client } from '../_shared/unipile/v2-client.ts';
+import { isUnipileApiError } from '../_shared/unipile/errors.ts';
+import { v2ApiKeyForAccount } from '../_shared/unipile/v2-accounts.ts';
+import { assertCompanyPageAccessV2, publishLinkedInPostV2 } from '../_shared/unipile/posts-v2.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -29,7 +33,7 @@ Deno.serve(async (req) => {
     const destination = parseLinkedInDestination(body.account_id);
     if (!destination) return json({ success: false, error: 'Invalid LinkedIn publishing account' }, 400);
     const { data: account } = await supabase.from('unipile_accounts')
-      .select('id, organization_id, unipile_account_id, display_name, access_token_encrypted, dsn_url')
+      .select('id, organization_id, unipile_account_id, display_name, access_token_encrypted, dsn_url, api_version')
       .eq('id', destination.accountId).eq('provider', 'LINKEDIN').eq('status', 'active').maybeSingle();
     if (!account) return json({ success: false, error: 'Active LinkedIn account not found' }, 404);
     try { await assertOrgAccess(req, supabase, account.organization_id); }
@@ -54,8 +58,15 @@ Deno.serve(async (req) => {
     }
     const encryptionKey = Deno.env.get('ENCRYPTION_KEY');
     if (!encryptionKey) return json({ success: false, error: 'Publishing credentials are not configured' }, 500);
-    const client = await createUnipileClientFromAccount({ accessTokenEncrypted: account.access_token_encrypted, dsnUrl: account.dsn_url }, encryptionKey);
-    if (destination.organizationId) await assertLinkedInPageAccess(client, account.unipile_account_id, destination.organizationId);
+    // v2 accounts (Unipile hosted auth since 2026-10-23) have no v1 token or DSN: they go through
+    // the v2 API with the org's key copy or the platform key.
+    const isV2 = account.api_version === 'v2';
+    const v2 = isV2 ? new UnipileV2Client({ apiKey: await v2ApiKeyForAccount(account, encryptionKey) }) : null;
+    const client = isV2 ? null : await createUnipileClientFromAccount({ accessTokenEncrypted: account.access_token_encrypted, dsnUrl: account.dsn_url }, encryptionKey);
+    if (destination.organizationId) {
+      if (v2) await assertCompanyPageAccessV2(v2, account.unipile_account_id, destination.organizationId);
+      else await assertLinkedInPageAccess(client!, account.unipile_account_id, destination.organizationId);
+    }
     const content = body.content === undefined ? buildLinkedInContent(output) : normalizeLinkedInContent(body.content);
     if (body.schedule_for !== undefined) {
       const scheduledAt = typeof body.schedule_for === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(body.schedule_for) ? new Date(body.schedule_for) : new Date(NaN);
@@ -74,7 +85,7 @@ Deno.serve(async (req) => {
       if (error) return json({ success: false, error: 'Could not schedule LinkedIn publication' }, 500);
       return json({ success: true, scheduled: true, queue_id: queued.id });
     }
-    const result = await publishLinkedInPost(client, account.unipile_account_id, destination.organizationId, content, async (published) => {
+    const record = async (published: LinkedInPublishResult) => {
       const { error } = await supabase.from('ghl_published_posts').insert({
         content_output_id: output.id,
         organization_id: account.organization_id,
@@ -95,11 +106,18 @@ Deno.serve(async (req) => {
         queueError = queueResult.error;
       }
       if (error || queueError) throw new Error('Publication tracking failed');
-    });
+    };
+    const result = v2
+      ? await publishLinkedInPostV2(v2, account.unipile_account_id, destination.organizationId, content, record)
+      : await publishLinkedInPost(client!, account.unipile_account_id, destination.organizationId, content, record);
     return json({ success: true, ...result });
   } catch (error) {
     if (error instanceof LinkedInIdentityError || error instanceof LinkedInPublishValidationError) {
       return json({ success: false, error: error.message }, error.status);
+    }
+    if (isUnipileApiError(error)) {
+      // v2 errors carry no credentials; status null means the request never got an answer.
+      return json({ success: false, error: error.message, code: error.code, retryable: error.retryable }, error.status || (error.retryable ? 502 : 400));
     }
     const parsed = parseUnipileError(error);
     // Never log SDK objects: their request metadata can contain credential headers.

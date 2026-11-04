@@ -97,7 +97,10 @@ ACA adds no markup on any of them.</sub>
     <td width="50%" valign="top">
       <h3>Content in your voice</h3>
       <p>Turn one idea into a LinkedIn post, a carousel and a short video, review the drafts, and
-      schedule them. Autopilots keep posting on a plan you set.</p>
+      schedule them on one calendar for LinkedIn, Instagram, Facebook, TikTok, YouTube, Google
+      Business, Threads, Pinterest and X (through your own Zernio key). Autopilots keep posting on
+      a plan you set, the scheduling agent fills the empty slots, and each post's reach and
+      engagement come back.</p>
       <img src=".github/assets/content-farming.png" alt="One idea turned into a post, a carousel and a short video">
     </td>
     <td width="50%" valign="top">
@@ -108,7 +111,7 @@ ACA adds no markup on any of them.</sub>
         <li>Enrichment and email verification before anything is sent</li>
         <li>A suppression list, unsubscribe and bounce handling, and sends that stop on reply</li>
         <li>CRM with contacts, deals and a pipeline report</li>
-        <li>REST API, CLI, MCP server and n8n node, so Claude, Codex or your own agents can run campaigns</li>
+        <li>REST API, CLI, MCP server and n8n node, so Claude, Codex or your own agents can run campaigns and schedule posts</li>
       </ul>
     </td>
   </tr>

@@ -723,3 +723,21 @@ verify_jwt = false
 
 [functions.webhook-retry]
 verify_jwt = false
+
+[functions.scheduler-agent]
+verify_jwt = false
+
+[functions.scheduler-destinations]
+verify_jwt = false
+
+[functions.publish-to-zernio]
+verify_jwt = false
+
+[functions.zernio-connect]
+verify_jwt = false
+
+[functions.refresh-post-metrics]
+verify_jwt = false
+
+[functions.api-scheduler]
+verify_jwt = false

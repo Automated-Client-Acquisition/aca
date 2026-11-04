@@ -731,6 +731,17 @@ SELECT cron.schedule('refresh-content-metrics', '41 * * * *', $cron$
     timeout_milliseconds := 150000
   );
   $cron$);
+SELECT cron.schedule('refresh-post-metrics', '7-59/15 * * * *', $cron$
+  SELECT net.http_post(
+    url := (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'supabase_url') || '/functions/v1/refresh-post-metrics',
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'Authorization', 'Bearer ' || (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'supabase_service_role_key')
+    ),
+    body := '{"source": "cron"}'::jsonb,
+    timeout_milliseconds := 120000
+  );
+  $cron$);
 SELECT cron.schedule('refresh-warmup-endpoint-health', '47 * * * *', $cron$SELECT public.refresh_warmup_endpoint_health();$cron$);
 SELECT cron.schedule('reply-notification-tick', '*/5 * * * *', $cron$
   SELECT net.http_post(

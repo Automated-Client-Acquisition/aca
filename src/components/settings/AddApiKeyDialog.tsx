@@ -52,6 +52,7 @@ const PROVIDERS = [
   // CRM & Social
   { value: "leadconnector", label: "LeadConnector", description: "For social media publishing (requires socialplanner/account.readonly scope)", category: "CRM & Social" },
   { value: "unipile", label: "Unipile", description: "For multi-channel messaging (LinkedIn, WhatsApp, Telegram, etc.)", category: "CRM & Social" },
+  { value: "zernio", label: "Zernio", description: "Publish from the Scheduler to Facebook, Instagram, TikTok, Google Business, YouTube, Threads and Pinterest", category: "CRM & Social" },
   // Contact enrichment
   { value: "apollo", label: "Apollo.io", description: "Email + phone enrichment from LinkedIn", category: "Contact Enrichment" },
   { value: "hunter", label: "Hunter", description: "Work email finding by name and company domain", category: "Contact Enrichment" },
@@ -222,6 +223,15 @@ const PROVIDER_HELP: Record<string, {
       { text: "Copy your API key" },
       { text: "API docs:", link: { url: "https://app.quickenrich.io/docs", label: "app.quickenrich.io/docs" } },
       { text: "Pick Standard or GTM Unlimited below to match your subscription" },
+    ],
+  },
+  zernio: {
+    description: "Zernio publishes your Scheduler posts to Facebook, Instagram, TikTok, Google Business, YouTube, Threads, Pinterest, X and Bluesky. You connect your social accounts in Zernio; they then show up in the Scheduler.",
+    steps: [
+      { text: "Create an account at", link: { url: "https://zernio.com", label: "zernio.com" } },
+      { text: "Connect your social accounts in Zernio" },
+      { text: "Go to", link: { url: "https://zernio.com/dashboard/api-keys", label: "Dashboard → API keys" } },
+      { text: "Create a key and copy it (it starts with sk_ and is shown once)" },
     ],
   },
   zapmail: {

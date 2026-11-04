@@ -84,7 +84,7 @@ const features = [
       "Image and video generation with your providers",
       "Voice and text-to-speech generation",
       "Subtitles and carousel creation",
-      "Content generation and publishing workflows",
+      "One posting calendar for every channel, with post stats",
     ],
   },
   {
@@ -675,8 +675,7 @@ export default function Pricing() {
           <article className="pe-plan pe-plan--selfhost">
             <div className="pe-plan--selfhost__head">
               <span className="pe-plan__label">
-                For developers & high-volume senders{" "}
-                <span className="pe-plan__recommend">CODE RELEASE SOON</span>
+                <span className="pe-plan__recommend">NOW ON GITHUB</span>
               </span>
               <h2>Self-hosted</h2>
               <p className="pe-plan__description">
@@ -686,11 +685,11 @@ export default function Pricing() {
                 $0<span>/forever</span>
               </div>
               <p className="pe-plan__billing">
-                Source available · FSL-1.1-ALv2, Apache 2.0 after two years
+                Free to run and change for your business and your clients. Just don't resell it as your own hosted product.
               </p>
               <Button asChild variant="outline" className="pe-button">
                 <a href={ACA_GITHUB_URL} target="_blank" rel="noopener noreferrer">
-                  <Github size={17} /> Watch the repo on GitHub
+                  <Github size={17} /> Get the code on GitHub
                 </a>
               </Button>
             </div>

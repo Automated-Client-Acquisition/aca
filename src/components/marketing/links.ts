@@ -4,6 +4,6 @@
  */
 
 /** The self-hosted source (FSL-1.1-ALv2), as `owner/name`. */
-export const ACA_GITHUB_REPO = "seguelaCedric/aca";
+export const ACA_GITHUB_REPO = "Automated-Client-Acquisition/aca";
 
 export const ACA_GITHUB_URL = `https://github.com/${ACA_GITHUB_REPO}`;

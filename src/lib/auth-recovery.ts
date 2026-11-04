@@ -25,6 +25,9 @@ export type RecoveryLanding =
 
 function detect(): RecoveryLanding | null {
   if (typeof window === "undefined") return null;
+  // Connect-flow return pages (/connect/zernio, /connect/complete) carry the provider's own
+  // `error` param: a failed Instagram sign-in is not a broken password-reset link.
+  if (window.location.pathname.startsWith("/connect/")) return null;
 
   const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
   const query = new URLSearchParams(window.location.search);

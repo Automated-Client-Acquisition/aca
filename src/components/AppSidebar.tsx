@@ -1,6 +1,7 @@
 import {
   Layers,
   CalendarClock,
+  CalendarDays,
   Package,
   Lightbulb,
   Telescope,
@@ -90,16 +91,18 @@ function matchesActive(item: NavItem, pathname: string): boolean {
 
 // Making content: the formats (blueprints), what they're about (ideas), where
 // ideas come from (research), who's speaking to whom (Brand Kit, /assets), and
-// what's been made. "Content" is runs, saved pieces and the publish queue
-// behind one item (tabs on those pages). Autopilots rotate blueprints across
-// accounts on a schedule, so they sit right after Blueprints.
+// what's been made. "Content" is runs and saved pieces behind one item (tabs
+// on those pages). Autopilots rotate blueprints across accounts on a schedule,
+// so they sit right after Blueprints, with the Scheduler (every post on one
+// calendar) next to them.
 const contentItems: NavItem[] = [
   { icon: Layers, label: "Blueprints", href: "/blueprints" },
   { icon: CalendarClock, label: "Autopilots", href: "/autopilots", feature: "autopilots" },
+  { icon: CalendarDays, label: "Scheduler", href: "/scheduler", feature: "publishing" },
   { icon: Lightbulb, label: "Ideas", href: "/ideas" },
   { icon: Telescope, label: "Research", href: "/research" },
   { icon: Package, label: "Brand Kit", href: "/assets" },
-  { icon: Calendar, label: "Content", href: "/jobs", activeMatch: ["/jobs", "/saved", "/publish-queue"] },
+  { icon: Calendar, label: "Content", href: "/jobs", activeMatch: ["/jobs", "/saved"] },
 ];
 
 // ============================================================

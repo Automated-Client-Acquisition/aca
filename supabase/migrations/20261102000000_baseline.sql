@@ -16728,6 +16728,28 @@ $_$;
 ALTER FUNCTION "public"."public_signal_auto_enroll_public_candidates"("p_org" "uuid", "p_list_id" "uuid", "p_signal_types" "text"[], "p_require_email" boolean, "p_criteria" "jsonb", "p_lookback_days" integer) OWNER TO "postgres";
 
 
+CREATE OR REPLACE FUNCTION "public"."publish_queue_fill_organization"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO 'public'
+    AS $$
+BEGIN
+  IF NEW.organization_id IS NULL AND NEW.autopilot_id IS NOT NULL THEN
+    SELECT organization_id INTO NEW.organization_id FROM public.autopilots WHERE id = NEW.autopilot_id;
+  END IF;
+  IF NEW.organization_id IS NULL AND NEW.output_id IS NOT NULL THEN
+    SELECT organization_id INTO NEW.organization_id FROM public.content_outputs WHERE id = NEW.output_id;
+  END IF;
+  IF NEW.source IS NULL AND NEW.autopilot_id IS NOT NULL THEN
+    NEW.source := 'autopilot';
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."publish_queue_fill_organization"() OWNER TO "postgres";
+
+
 CREATE OR REPLACE FUNCTION "public"."pulse_account_activity"("p_org" "uuid") RETURNS TABLE("author" "text", "posts" bigint, "last_post_at" timestamp with time zone)
     LANGUAGE "sql" STABLE
     SET "search_path" TO 'public'
@@ -25708,7 +25730,7 @@ CREATE TABLE IF NOT EXISTS "public"."api_keys" (
     "expires_at" timestamp with time zone,
     "metadata" "jsonb" DEFAULT '{}'::"jsonb",
     CONSTRAINT "api_keys_capability_check" CHECK (("capability" = ANY (ARRAY['text'::"text", 'image'::"text", 'voice'::"text", 'video'::"text", 'data'::"text"]))),
-    CONSTRAINT "api_keys_provider_check" CHECK (("provider" = ANY (ARRAY['openrouter'::"text", 'ollama'::"text", 'openai'::"text", 'replicate'::"text", 'elevenlabs'::"text", 'fal'::"text", 'apify'::"text", 'youtube'::"text", 'leadconnector'::"text", 'gohighlevel'::"text", 'unipile'::"text", 'unipile_v2'::"text", 'apollo'::"text", 'hunter'::"text", 'prospeo'::"text", 'zapmail'::"text", 'heygen'::"text", 'pixabay'::"text", 'pexels'::"text", 'porkbun'::"text", 'mailtester_ninja'::"text", 'moltsets'::"text", 'quickenrich'::"text", 'alibaba'::"text", 'opencode'::"text", 'twilio'::"text"])))
+    CONSTRAINT "api_keys_provider_check" CHECK (("provider" = ANY (ARRAY['openrouter'::"text", 'ollama'::"text", 'openai'::"text", 'replicate'::"text", 'elevenlabs'::"text", 'fal'::"text", 'apify'::"text", 'youtube'::"text", 'leadconnector'::"text", 'gohighlevel'::"text", 'unipile'::"text", 'unipile_v2'::"text", 'apollo'::"text", 'hunter'::"text", 'prospeo'::"text", 'zapmail'::"text", 'heygen'::"text", 'pixabay'::"text", 'pexels'::"text", 'porkbun'::"text", 'mailtester_ninja'::"text", 'moltsets'::"text", 'quickenrich'::"text", 'alibaba'::"text", 'opencode'::"text", 'twilio'::"text", 'zernio'::"text"])))
 );
 
 
@@ -33081,8 +33103,13 @@ CREATE TABLE IF NOT EXISTS "public"."publish_queue" (
     "organization_id" "uuid",
     "tweet_thread" "jsonb",
     "publish_content" "jsonb",
+    "source" "text",
+    "post_group_id" "uuid",
+    "created_by" "uuid" DEFAULT "auth"."uid"(),
+    "agent_rationale" "text",
     CONSTRAINT "publish_queue_publish_content_object" CHECK ((("publish_content" IS NULL) OR ("jsonb_typeof"("publish_content") = 'object'::"text"))),
-    CONSTRAINT "publish_queue_status_check" CHECK (("status" = ANY (ARRAY['pending'::"text", 'publishing'::"text", 'published'::"text", 'failed'::"text"]))),
+    CONSTRAINT "publish_queue_source_check" CHECK ((("source" IS NULL) OR ("source" = ANY (ARRAY['autopilot'::"text", 'manual'::"text", 'agent'::"text"])))),
+    CONSTRAINT "publish_queue_status_check" CHECK (("status" = ANY (ARRAY['draft'::"text", 'pending'::"text", 'publishing'::"text", 'published'::"text", 'failed'::"text"]))),
     CONSTRAINT "publish_queue_variation_mode_check" CHECK (("variation_mode" = ANY (ARRAY['exact'::"text", 'slight_variation'::"text", 'regenerate'::"text"])))
 );
 
@@ -34188,6 +34215,61 @@ ALTER TABLE "public"."skool_communities" OWNER TO "postgres";
 
 COMMENT ON TABLE "public"."skool_communities" IS 'Configuration for Skool communities to sync membership data from';
 
+
+
+CREATE TABLE IF NOT EXISTS "public"."social_post_metric_snapshots" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "metric_id" "uuid" NOT NULL,
+    "organization_id" "uuid" NOT NULL,
+    "captured_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "impressions" integer,
+    "reach" integer,
+    "likes" integer,
+    "comments" integer,
+    "shares" integer,
+    "saves" integer,
+    "views" integer,
+    "clicks" integer,
+    "engagement_rate" numeric(8,2)
+);
+
+
+ALTER TABLE "public"."social_post_metric_snapshots" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."social_post_metrics" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "organization_id" "uuid" NOT NULL,
+    "queue_id" "uuid" NOT NULL,
+    "output_id" "uuid",
+    "account_id" "text" NOT NULL,
+    "platform" "text",
+    "provider" "text" DEFAULT 'zernio'::"text" NOT NULL,
+    "platform_post_id" "text",
+    "post_url" "text",
+    "published_at" timestamp with time zone,
+    "status" "text" DEFAULT 'pending'::"text" NOT NULL,
+    "impressions" integer,
+    "reach" integer,
+    "likes" integer,
+    "comments" integer,
+    "shares" integer,
+    "saves" integer,
+    "views" integer,
+    "clicks" integer,
+    "engagement_rate" numeric(8,2),
+    "extra" "jsonb" DEFAULT '{}'::"jsonb" NOT NULL,
+    "last_error" "text",
+    "fetched_at" timestamp with time zone,
+    "next_fetch_at" timestamp with time zone DEFAULT "now"(),
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "provider_post_id" "text",
+    CONSTRAINT "social_post_metrics_status_check" CHECK (("status" = ANY (ARRAY['pending'::"text", 'synced'::"text", 'no_access'::"text", 'unavailable'::"text", 'error'::"text"])))
+);
+
+
+ALTER TABLE "public"."social_post_metrics" OWNER TO "postgres";
 
 
 CREATE TABLE IF NOT EXISTS "public"."social_posts" (
@@ -37482,6 +37564,21 @@ ALTER TABLE ONLY "public"."skool_communities"
 
 ALTER TABLE ONLY "public"."skool_communities"
     ADD CONSTRAINT "skool_communities_slug_key" UNIQUE ("slug");
+
+
+
+ALTER TABLE ONLY "public"."social_post_metric_snapshots"
+    ADD CONSTRAINT "social_post_metric_snapshots_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."social_post_metrics"
+    ADD CONSTRAINT "social_post_metrics_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."social_post_metrics"
+    ADD CONSTRAINT "social_post_metrics_queue_id_key" UNIQUE ("queue_id");
 
 
 
@@ -42319,6 +42416,14 @@ CREATE UNIQUE INDEX "public_signals_dedup_key_uq" ON "public"."public_signals" U
 
 
 
+CREATE INDEX "publish_queue_org_scheduled_idx" ON "public"."publish_queue" USING "btree" ("organization_id", "scheduled_for");
+
+
+
+CREATE INDEX "publish_queue_post_group_idx" ON "public"."publish_queue" USING "btree" ("post_group_id") WHERE ("post_group_id" IS NOT NULL);
+
+
+
 CREATE UNIQUE INDEX "signal_activity_log_dedup_uq" ON "public"."signal_activity_log" USING "btree" ("subscription_id", "signal_dedup_key");
 
 
@@ -42380,6 +42485,18 @@ CREATE UNIQUE INDEX "skills_org_slug_unique" ON "public"."skills" USING "btree" 
 
 
 CREATE INDEX "skills_public_idx" ON "public"."skills" USING "btree" ("is_public", "created_at" DESC) WHERE ("is_public" = true);
+
+
+
+CREATE INDEX "social_post_metric_snapshots_metric_idx" ON "public"."social_post_metric_snapshots" USING "btree" ("metric_id", "captured_at");
+
+
+
+CREATE INDEX "social_post_metrics_due_idx" ON "public"."social_post_metrics" USING "btree" ("next_fetch_at") WHERE ("next_fetch_at" IS NOT NULL);
+
+
+
+CREATE INDEX "social_post_metrics_org_published_idx" ON "public"."social_post_metrics" USING "btree" ("organization_id", "published_at" DESC);
 
 
 
@@ -42548,6 +42665,10 @@ CREATE OR REPLACE TRIGGER "organization_settings_updated_at" BEFORE UPDATE ON "p
 
 
 CREATE OR REPLACE TRIGGER "prompt_library_updated_at" BEFORE UPDATE ON "public"."prompt_library" FOR EACH ROW EXECUTE FUNCTION "public"."update_prompt_library_updated_at"();
+
+
+
+CREATE OR REPLACE TRIGGER "publish_queue_fill_organization" BEFORE INSERT ON "public"."publish_queue" FOR EACH ROW EXECUTE FUNCTION "public"."publish_queue_fill_organization"();
 
 
 
@@ -46467,6 +46588,26 @@ ALTER TABLE ONLY "public"."skills"
 
 
 
+ALTER TABLE ONLY "public"."social_post_metric_snapshots"
+    ADD CONSTRAINT "social_post_metric_snapshots_metric_id_fkey" FOREIGN KEY ("metric_id") REFERENCES "public"."social_post_metrics"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."social_post_metric_snapshots"
+    ADD CONSTRAINT "social_post_metric_snapshots_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."social_post_metrics"
+    ADD CONSTRAINT "social_post_metrics_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."social_post_metrics"
+    ADD CONSTRAINT "social_post_metrics_queue_id_fkey" FOREIGN KEY ("queue_id") REFERENCES "public"."publish_queue"("id") ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."social_posts"
     ADD CONSTRAINT "social_posts_campaign_id_fkey" FOREIGN KEY ("campaign_id") REFERENCES "public"."campaigns"("id") ON DELETE SET NULL;
 
@@ -47152,6 +47293,14 @@ CREATE POLICY "Members read their org's opt-outs" ON "public"."channel_opt_outs"
 
 
 CREATE POLICY "Members read their org's phone backfill jobs" ON "public"."contact_phone_backfill_jobs" FOR SELECT TO "authenticated" USING (("organization_id" IN ( SELECT "public"."get_accessible_organization_ids"() AS "get_accessible_organization_ids")));
+
+
+
+CREATE POLICY "Members read their org's post metric snapshots" ON "public"."social_post_metric_snapshots" FOR SELECT TO "authenticated" USING (("organization_id" = "public"."user_organization_id"()));
+
+
+
+CREATE POLICY "Members read their org's post metrics" ON "public"."social_post_metrics" FOR SELECT TO "authenticated" USING (("organization_id" = "public"."user_organization_id"()));
 
 
 
@@ -52082,6 +52231,12 @@ CREATE POLICY "skills_update" ON "public"."skills" FOR UPDATE USING (("organizat
 ALTER TABLE "public"."skool_communities" ENABLE ROW LEVEL SECURITY;
 
 
+ALTER TABLE "public"."social_post_metric_snapshots" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."social_post_metrics" ENABLE ROW LEVEL SECURITY;
+
+
 ALTER TABLE "public"."social_posts" ENABLE ROW LEVEL SECURITY;
 
 
@@ -55912,6 +56067,12 @@ GRANT ALL ON FUNCTION "public"."public_signal_auto_enroll_public_candidates"("p_
 
 
 
+GRANT ALL ON FUNCTION "public"."publish_queue_fill_organization"() TO "anon";
+GRANT ALL ON FUNCTION "public"."publish_queue_fill_organization"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."publish_queue_fill_organization"() TO "service_role";
+
+
+
 GRANT ALL ON FUNCTION "public"."pulse_account_activity"("p_org" "uuid") TO "anon";
 GRANT ALL ON FUNCTION "public"."pulse_account_activity"("p_org" "uuid") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."pulse_account_activity"("p_org" "uuid") TO "service_role";
@@ -59646,6 +59807,18 @@ GRANT ALL ON TABLE "public"."skills" TO "service_role";
 GRANT ALL ON TABLE "public"."skool_communities" TO "anon";
 GRANT ALL ON TABLE "public"."skool_communities" TO "authenticated";
 GRANT ALL ON TABLE "public"."skool_communities" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."social_post_metric_snapshots" TO "anon";
+GRANT ALL ON TABLE "public"."social_post_metric_snapshots" TO "authenticated";
+GRANT ALL ON TABLE "public"."social_post_metric_snapshots" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."social_post_metrics" TO "anon";
+GRANT ALL ON TABLE "public"."social_post_metrics" TO "authenticated";
+GRANT ALL ON TABLE "public"."social_post_metrics" TO "service_role";
 
 
 

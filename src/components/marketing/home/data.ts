@@ -100,6 +100,7 @@ export const MODULES: Module[] = [
       "Almost hand-written posts shipped daily to every LinkedIn account you run - founders, team, ghostwriting clients. Drafted in your voice. Tuned to the same ICP the outbound module is hitting.",
       "When someone comments \"send\" or \"interested\" on a post, the AI agent reads the comment, DMs them the lead magnet in 30 seconds, qualifies in-thread, books the meeting. Same day. No Zapier. No manual sorting.",
       "Engagement watched too: likes, saves, profile views all become warm leads. The first DM references the actual post they engaged with.",
+      "Every post sits on one calendar: LinkedIn, Instagram, Facebook, TikTok, YouTube, Google Business, Threads, Pinterest and X. The scheduling agent fills the empty slots at the times your audience is online, and each post's reach and engagement come back so the next week leans into what worked.",
     ],
     stats: [
       { value: "∞", label: "LinkedIn accounts", accent: true },

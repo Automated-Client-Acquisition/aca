@@ -595,6 +595,16 @@ export function MailboxProvisioningPanel({ domain, tenant }: MailboxProvisioning
     for (const mb of mailboxes) {
       await runRepairOrRetest(mb);
     }
+    // Also re-measure the domain now rather than at its next scheduled probe, so
+    // "No health evidence" / "last probed" don't outlive the fix that was just retested.
+    try {
+      await supabase.functions.invoke("email-domain-health-probe", {
+        body: { phase: "send", organization_id: currentOrganization.id, domain_ids: [domain.id], force: true },
+      });
+      await queryClient.invalidateQueries({ queryKey: ["email-sending-domains"] });
+    } catch (err) {
+      console.warn("Domain probe after retest failed:", err);
+    }
     setRetestingAll(false);
   };
 

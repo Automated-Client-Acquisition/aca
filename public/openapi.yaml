@@ -186,6 +186,13 @@ tags:
       ACA Network: bring your own mailboxes into the shared warmup network, from a
       self-hosted ACA install or a hosted workspace. Needs an organization approved
       under Settings → ACA Network and a token with the `network` scope.
+  - name: Scheduler
+    description: |
+      The Social Scheduler: every post across your channels on one calendar. Schedule,
+      reschedule, approve, publish now and retry posts on Instagram, Facebook, TikTok,
+      YouTube, Google Business, Threads, Pinterest and X (through your own Zernio key),
+      LinkedIn and GHL; let the scheduling agent draft a plan; read reach and engagement
+      once a post is out. The same operations are MCP tools (`schedule_post`, …).
   - name: Webhooks
     description: Subscribe to ACA events, and act on them from your own automation.
 
@@ -1608,6 +1615,337 @@ paths:
         "403": { $ref: "#/components/responses/NetworkForbidden" }
         "404": { $ref: "#/components/responses/NotFound" }
 
+  /v1/scheduler/accounts:
+    get:
+      operationId: listSchedulerAccounts
+      tags: [Scheduler]
+      summary: List the accounts you can post to
+      description: |
+        `provider` says how a post goes out: `zernio` (your own Zernio key), `linkedin_native`,
+        `ghl` (GHL Social Planner) or `x`. A GHL copy of an account also connected through
+        Zernio is left out so nothing posts twice; `replaced_by` maps such ids to their
+        Zernio account (sending one still works, it posts through Zernio).
+      responses:
+        "200":
+          description: Accounts.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      accounts: { type: array, items: { $ref: "#/components/schemas/SchedulerAccount" } }
+                      replaced_by: { type: object, additionalProperties: { type: string } }
+                      notes: { type: array, items: { type: string } }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /v1/scheduler/accounts/connect:
+    post:
+      operationId: connectSchedulerAccount
+      tags: [Scheduler]
+      summary: Get a sign-in link to connect a social account
+      description: |
+        Returns a link that connects the account through your Zernio key (add one under
+        Settings → API keys first). Open it in a browser and sign in to the platform.
+        LinkedIn returns the in-app Senders page instead (it connects natively).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [platform]
+              properties:
+                platform: { type: string, enum: [instagram, facebook, tiktok, youtube, google, threads, pinterest, twitter, linkedin] }
+      responses:
+        "200":
+          description: The link.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      connect_url: { type: string, format: uri }
+                      note: { type: string }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "409": { description: No Zernio API key yet. }
+
+  /v1/scheduler/posts:
+    get:
+      operationId: listSchedulerPosts
+      tags: [Scheduler]
+      summary: List posts on the calendar
+      description: Posts in a window, soonest first (default the last 7 days and the next 30; at most 120 days).
+      parameters:
+        - { name: from, in: query, schema: { type: string, format: date-time } }
+        - { name: to, in: query, schema: { type: string, format: date-time } }
+        - name: status
+          in: query
+          description: Comma-separated.
+          schema: { type: string, example: "scheduled,failed" }
+        - { name: platform, in: query, schema: { type: string, example: instagram } }
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 200, default: 50 } }
+      responses:
+        "200":
+          description: Posts.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      from: { type: string, format: date-time }
+                      to: { type: string, format: date-time }
+                      total: { type: integer }
+                      truncated: { type: boolean }
+                      posts: { type: array, items: { $ref: "#/components/schemas/SchedulerPost" } }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+    post:
+      operationId: createSchedulerPost
+      tags: [Scheduler]
+      summary: Schedule a post
+      description: |
+        One post to one or more accounts. Refused with `422` and `issues[]` when it would fail
+        on a platform (Instagram, TikTok, YouTube and Pinterest need a picture or video; X counts
+        280 weighted characters…), unless `status` is `draft`. It goes out at `scheduled_for`,
+        or within 5 minutes with `publish_now`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SchedulerPostInput" }
+            example:
+              accounts: ["zernio:6aeb25f51c681a7c26b98d78"]
+              caption: "Three ways to turn contact forms into booked calls."
+              images: ["https://example.com/slide-1.png", "https://example.com/slide-2.png"]
+              scheduled_for: "2026-11-10T09:00:00+01:00"
+      responses:
+        "201":
+          description: The post.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      post: { $ref: "#/components/schemas/SchedulerPost" }
+                      issues: { type: array, items: { type: object } }
+                      notes: { type: array, items: { type: string } }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { description: An account id isn't one of yours. }
+        "422": { description: The post would fail on a platform; see `issues`. }
+
+  /v1/scheduler/posts/approve:
+    post:
+      operationId: approveSchedulerPosts
+      tags: [Scheduler]
+      summary: Approve drafts and agent proposals
+      description: |
+        Drafts → scheduled. A time already past moves to 5 minutes from now, 90 minutes apart
+        per account. A draft that would fail stays a draft and is listed in `blocked`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ids]
+              properties:
+                ids: { type: array, maxItems: 50, items: { type: string, format: uuid } }
+      responses:
+        "200":
+          description: What was approved and what wasn't.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      approved: { type: array, items: { type: string } }
+                      blocked: { type: array, items: { type: object, properties: { id: { type: string }, reason: { type: string } } } }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /v1/scheduler/posts/{id}:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      operationId: getSchedulerPost
+      tags: [Scheduler]
+      summary: Fetch a post
+      parameters:
+        - { name: history, in: query, description: Include the stats history., schema: { type: boolean } }
+      responses:
+        "200":
+          description: The post.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data: { $ref: "#/components/schemas/SchedulerPost" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    patch:
+      operationId: updateSchedulerPost
+      tags: [Scheduler]
+      summary: Edit or reschedule a post
+      description: |
+        Until it goes out. Every field is optional; `accounts` replaces the set. A failed post
+        moved to a new time is retried. `409` once it has gone out.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SchedulerPostInput" }
+      responses:
+        "200":
+          description: The post after the edit.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data: { type: object, properties: { post: { $ref: "#/components/schemas/SchedulerPost" } } }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { description: Already published. }
+        "422": { description: The edited post would fail on a platform; see `issues`. }
+    delete:
+      operationId: deleteSchedulerPost
+      tags: [Scheduler]
+      summary: Remove a post
+      description: Removes what hasn't gone out. Destinations already published stay as the record.
+      responses:
+        "200": { description: Removed. }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { description: Nothing left to remove. }
+
+  /v1/scheduler/posts/{id}/publish:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    post:
+      operationId: publishSchedulerPostNow
+      tags: [Scheduler]
+      summary: Publish now
+      description: A draft or scheduled post goes out at the next queue run (within 5 minutes).
+      responses:
+        "200": { description: Queued. }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { description: Already published. }
+        "422": { description: It would fail on a platform; see `issues`. }
+
+  /v1/scheduler/posts/{id}/retry:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    post:
+      operationId: retrySchedulerPost
+      tags: [Scheduler]
+      summary: Retry a failed post
+      description: The post's failed destinations go back in the queue now. Read `error` first; a retry of the same content fails the same way.
+      responses:
+        "200": { description: Back in the queue. }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { description: Nothing failed. }
+
+  /v1/scheduler/posts/{id}/stats:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+    get:
+      operationId: getSchedulerPostStats
+      tags: [Scheduler]
+      summary: How a post did
+      description: |
+        Reach, impressions, likes, comments, shares, saves, views and engagement rate, in total,
+        per account and over time. Read from the platform through Zernio: hourly on the first
+        day, daily for a week, weekly to 30 days. `refresh=true` reads it now. Posts sent
+        another way (GHL, native LinkedIn, X) have no stats.
+      parameters:
+        - { name: refresh, in: query, schema: { type: boolean } }
+      responses:
+        "200":
+          description: Stats.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      stats: { $ref: "#/components/schemas/SchedulerStats" }
+                      destinations: { type: array, items: { type: object } }
+                      history: { type: array, items: { type: object } }
+                      note: { type: string }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /v1/scheduler/plan:
+    post:
+      operationId: planSchedulerPosts
+      tags: [Scheduler]
+      summary: Let the scheduling agent plan posts
+      description: |
+        The agent drafts posts into the best free slots for the chosen accounts, in your brand
+        voice, from your idea bank, leaning into what performed before. It creates drafts:
+        add visuals where a platform needs one, then approve them. Takes up to two minutes.
+        Needs an OpenRouter key in Settings → Integrations.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [instruction]
+              properties:
+                instruction: { type: string, example: "5 LinkedIn posts next week about our new feature" }
+                accounts: { type: array, items: { type: string }, description: Default every account. }
+                range_start: { type: string, format: date-time }
+                range_end: { type: string, format: date-time }
+                timezone: { type: string, example: Europe/Paris }
+                brand_voice_id: { type: string, format: uuid }
+                product_id: { type: string, format: uuid }
+      responses:
+        "201":
+          description: The draft proposals.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      summary: { type: string }
+                      proposals: { type: array, items: { $ref: "#/components/schemas/SchedulerPost" } }
+                      next_step: { type: string }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "422": { description: The agent couldn't plan (no free slot, no key…); see `error`. }
+
   /v1/webhooks:
     get:
       operationId: listWebhookSubscriptions
@@ -2854,6 +3192,89 @@ components:
         stage_id: { type: string, format: uuid, description: Place directly into a pipeline stage. }
         owner_user_id: { type: string, format: uuid, description: Assign an owner. }
         source: { type: string, description: "Per-contact attribution, overriding the request default." }
+
+    SchedulerAccount:
+      type: object
+      properties:
+        id: { type: string, example: "zernio:6aeb25f51c681a7c26b98d78" }
+        platform: { type: string, example: instagram }
+        name: { type: string }
+        username: { type: string, nullable: true }
+        provider: { type: string, enum: [zernio, linkedin_native, ghl, x] }
+        kind: { type: string, nullable: true, description: "LinkedIn: profile or page." }
+        avatar_url: { type: string, nullable: true }
+        active: { type: boolean }
+
+    SchedulerPostInput:
+      type: object
+      properties:
+        accounts: { type: array, items: { type: string }, description: Account ids from /v1/scheduler/accounts. Required on create. }
+        caption: { type: string, description: Used on every platform without its own caption. }
+        captions: { type: object, additionalProperties: { type: string }, example: { linkedin: "…", twitter: "…" } }
+        images: { type: array, maxItems: 20, items: { type: string, format: uri }, description: Public https URLs; several make a carousel where supported. }
+        video: { type: string, format: uri, description: One video instead of pictures. }
+        first_comment: { type: string, description: Posted as the first comment on LinkedIn, Facebook and Instagram. }
+        format: { type: string, enum: [feed, story], default: feed }
+        scheduled_for: { type: string, format: date-time }
+        publish_now: { type: boolean }
+        status: { type: string, enum: [scheduled, draft], default: scheduled }
+        title: { type: string }
+
+    SchedulerStats:
+      type: object
+      nullable: true
+      properties:
+        status: { type: string, enum: [pending, synced, no_access, unavailable, error] }
+        reach: { type: integer }
+        impressions: { type: integer }
+        likes: { type: integer }
+        comments: { type: integer }
+        shares: { type: integer }
+        saves: { type: integer }
+        views: { type: integer }
+        clicks: { type: integer }
+        interactions: { type: integer, description: Likes, comments, shares and saves. }
+        engagement_rate: { type: number, nullable: true, description: Percent. }
+        post_url: { type: string, nullable: true }
+        updated_at: { type: string, format: date-time, nullable: true }
+        note: { type: string, nullable: true }
+
+    SchedulerPost:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        status: { type: string, enum: [draft, scheduled, publishing, published, failed] }
+        origin: { type: string, enum: [manual, agent, autopilot] }
+        title: { type: string }
+        caption: { type: string }
+        captions: { type: object, additionalProperties: { type: string } }
+        media:
+          type: object
+          properties:
+            images: { type: array, items: { type: string } }
+            video: { type: string, nullable: true }
+        format: { type: string, enum: [feed, story] }
+        first_comment: { type: string, nullable: true }
+        scheduled_for: { type: string, format: date-time }
+        published_at: { type: string, format: date-time, nullable: true }
+        autopilot: { type: string, nullable: true }
+        rationale: { type: string, nullable: true, description: Why the agent proposed it. }
+        error: { type: string, nullable: true }
+        editable: { type: boolean }
+        destinations:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string, format: uuid }
+              account_id: { type: string }
+              platform: { type: string }
+              status: { type: string }
+              scheduled_for: { type: string, format: date-time }
+              published_at: { type: string, format: date-time, nullable: true }
+              error: { type: string, nullable: true }
+              stats: { $ref: "#/components/schemas/SchedulerStats" }
+        stats: { $ref: "#/components/schemas/SchedulerStats" }
 
     Error:
       type: object

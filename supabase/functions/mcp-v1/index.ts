@@ -17,6 +17,15 @@ import {
   draftPlanNote,
 } from "../_shared/mcp-activation.ts";
 import { MCP_URL } from "../_shared/site-config.ts";
+import {
+  createSchedulerPost,
+  getSchedulerPost,
+  getSchedulerPostStats,
+  listSchedulerAccounts,
+  listSchedulerPosts,
+  planSchedulerPosts,
+  SchedulerError,
+} from "../_shared/scheduler-api.ts";
 
 type Rpc = {
   jsonrpc: "2.0";
@@ -33,7 +42,7 @@ const headers = {
   "Content-Type": "application/json",
   "X-Content-Type-Options": "nosniff",
 };
-const SERVER_VERSION = "1.5.2";
+const SERVER_VERSION = "1.6.0";
 // Sent once at initialize. Clients that support it add this to the model's
 // context, so it decides when ACA is relevant and how to start.
 const SERVER_INSTRUCTIONS = [
@@ -41,7 +50,7 @@ const SERVER_INSTRUCTIONS = [
   "Only use ACA tools when the user is asking about prospecting, outreach, their pipeline, replies, or ACA content. Do not bring ACA up in unrelated conversations.",
   "At the start of an ACA task, call get_started. It returns the workspace stage and up to three next steps the user can choose from.",
   "Never invent people, emails, companies, or results. Contacts come from the user or from ACA. Report counts exactly as returned.",
-  "Campaign and lead-magnet tools create inactive drafts only. Sending, activation, and connecting LinkedIn or mailboxes happen in the ACA app; share the app_url a tool returns.",
+  "Campaign, lead-magnet and social post tools create inactive drafts only. Sending, activation, scheduling or publishing posts, and connecting LinkedIn, mailboxes or social accounts happen in the ACA app; share the app_url a tool returns.",
   "Ask the user before any write.",
 ].join(" ");
 const protectedResourceMetadata =
@@ -754,6 +763,114 @@ const tools: Record<
         lead_magnet_title: { type: "string", maxLength: 200 },
         dm_template: { type: "string", maxLength: 4000 },
         require_connection_for_linkedin: { type: "boolean" },
+      },
+    },
+  },
+  list_scheduler_accounts: {
+    description:
+      "List the social accounts the ACA Social Scheduler can post to (Instagram, Facebook, TikTok, YouTube, Google Business, Threads, Pinterest, X through the workspace's Zernio key; native LinkedIn; GHL). Returns id, platform, name, username and provider. Read-only.",
+    scope: "content:read",
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      openWorldHint: false,
+      idempotentHint: true,
+    },
+    schema: { type: "object", properties: {} },
+  },
+  list_scheduled_posts: {
+    description:
+      "List ACA Social Scheduler posts in a time window (default: last 7 days to next 30), with each destination's status and published stats. Read-only.",
+    scope: "content:read",
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      openWorldHint: false,
+      idempotentHint: true,
+    },
+    schema: {
+      type: "object",
+      properties: {
+        from: { type: "string", description: "ISO 8601 start" },
+        to: { type: "string", description: "ISO 8601 end, at most 120 days after from" },
+        status: { type: "string", description: "Comma-separated: draft, scheduled, publishing, published, failed" },
+        platform: { type: "string" },
+        limit: { type: "integer", minimum: 1, maximum: 200 },
+      },
+    },
+  },
+  get_scheduled_post: {
+    description: "Get one ACA Social Scheduler post: captions, media, time, destinations, errors and stats. Read-only.",
+    scope: "content:read",
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      openWorldHint: false,
+      idempotentHint: true,
+    },
+    schema: {
+      type: "object",
+      required: ["id"],
+      properties: { id: { type: "string" }, include_history: { type: "boolean" } },
+    },
+  },
+  get_post_stats: {
+    description:
+      "How a published ACA post did: reach, impressions, likes, comments, shares, saves, views and engagement rate, per account and over time (posts published through Zernio). Read-only.",
+    scope: "content:read",
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      openWorldHint: false,
+      idempotentHint: true,
+    },
+    schema: { type: "object", required: ["id"], properties: { id: { type: "string" } } },
+  },
+  create_social_post_draft: {
+    description:
+      "Create an inactive draft post in the ACA Social Scheduler for one or more accounts. Nothing is published: the user reviews, schedules and publishes it in ACA (app_url). Use only after the user approves the text. Media must be public https URLs.",
+    scope: "content:write",
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      openWorldHint: false,
+      idempotentHint: false,
+    },
+    schema: {
+      type: "object",
+      required: ["accounts"],
+      properties: {
+        accounts: { type: "array", minItems: 1, maxItems: 30, items: { type: "string" } },
+        caption: { type: "string", maxLength: 63206 },
+        captions: { type: "object" },
+        images: { type: "array", maxItems: 20, items: { type: "string" } },
+        video: { type: "string" },
+        first_comment: { type: "string", maxLength: 2200 },
+        format: { type: "string", enum: ["feed", "story"] },
+        scheduled_for: { type: "string", description: "Proposed time, ISO 8601" },
+        title: { type: "string", maxLength: 140 },
+      },
+    },
+  },
+  plan_social_posts: {
+    description:
+      "Ask the ACA scheduling agent to draft social posts into the best free slots for the chosen accounts, in the brand voice and from the idea bank. Uses an external AI model (usage may be billed). Creates inactive drafts only; the user reviews and approves them in ACA (app_url). Takes up to two minutes.",
+    scope: "content:write",
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      openWorldHint: true,
+      idempotentHint: false,
+    },
+    schema: {
+      type: "object",
+      required: ["instruction"],
+      properties: {
+        instruction: { type: "string", minLength: 3, maxLength: 2000 },
+        accounts: { type: "array", maxItems: 30, items: { type: "string" } },
+        range_start: { type: "string" },
+        range_end: { type: "string" },
+        timezone: { type: "string" },
       },
     },
   },
@@ -1890,7 +2007,72 @@ async function call(
       plan_note: draftPlanNote(plan.tier, plan.limits, "lead_magnets"),
     };
   }
+  const scheduled = await schedulerTool(name, args, org);
+  if (scheduled !== undefined) return scheduled;
   throw new OAuthError("NOT_FOUND", `Tool not implemented: ${name}`, 404);
+}
+
+/** Social Scheduler tools: reads and inactive drafts only (publishing stays in the app). */
+async function schedulerTool(
+  name: string,
+  args: Record<string, unknown>,
+  org: string,
+): Promise<unknown> {
+  const supabase = db();
+  const app_url = `${APP_URL}/scheduler`;
+  try {
+    if (name === "list_scheduler_accounts") {
+      return { ...(await listSchedulerAccounts(supabase, org)), app_url };
+    }
+    if (name === "list_scheduled_posts") {
+      return { ...(await listSchedulerPosts(supabase, org, args)), app_url };
+    }
+    if (name === "get_scheduled_post") {
+      return {
+        post: await getSchedulerPost(supabase, org, args.id, {
+          history: args.include_history === true,
+        }),
+        app_url,
+      };
+    }
+    if (name === "get_post_stats") {
+      return { ...(await getSchedulerPostStats(supabase, org, args.id)), app_url };
+    }
+    if (name === "create_social_post_draft") {
+      const { post, issues, notes } = await createSchedulerPost(supabase, org, {
+        ...args,
+        status: "draft",
+        publish_now: false,
+      });
+      return {
+        post,
+        issues,
+        notes,
+        note:
+          "Saved as an inactive draft. Nothing is published until the user schedules it in ACA.",
+        app_url,
+      };
+    }
+    if (name === "plan_social_posts") {
+      return {
+        ...(await planSchedulerPosts(supabase, org, args)),
+        next_step:
+          "These are inactive drafts. The user reviews them, adds visuals where a platform needs one, and approves them in ACA.",
+        app_url,
+      };
+    }
+    return undefined;
+  } catch (error) {
+    if (!(error instanceof SchedulerError)) throw error;
+    const code = error.status === 404
+      ? "NOT_FOUND"
+      : error.status === 409
+      ? "CONFLICT"
+      : error.status >= 500
+      ? "UPSTREAM_ERROR"
+      : "VALIDATION_ERROR";
+    throw new OAuthError(code, error.message, error.status >= 500 ? 502 : error.status);
+  }
 }
 
 Deno.serve(async (req) => {

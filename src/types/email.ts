@@ -617,7 +617,8 @@ export type PrerequisiteKey =
   | 'license'
   | 'directory_roles'
   | 'security_defaults'
-  | 'smtp_auth';
+  | 'smtp_auth'
+  | 'mail_send';
 
 export type PrerequisitesStatus = Partial<Record<PrerequisiteKey, PrerequisiteCheck>>;
 

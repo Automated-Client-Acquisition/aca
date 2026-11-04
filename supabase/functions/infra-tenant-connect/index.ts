@@ -32,6 +32,9 @@ import {
   ensureUserAdminRole,
   ensureTenantSmtpAuthEnabled,
   ensureSecurityDefaultsDisabled,
+  checkSendAppRole,
+  grantSendAppRole,
+  GRAPH_MAIL_SEND_ROLE_ID,
   M365Error,
 } from '../_shared/m365-client.ts';
 import { encryptValue } from '../_shared/encryption.ts';
@@ -262,6 +265,32 @@ async function handleRequest(req: Request): Promise<Response> {
           ? { ok: false, status: 'error', message: 'Tenant needs a Microsoft 365 Business Basic license (or higher) with Exchange Online. Purchase one in M365 Admin Center → Billing → Purchase services.', checked_at: now }
           : { ok: true, status: 'ok', checked_at: now },
       };
+
+      // Mail.Send application role. Tenants consented before Mail.Send joined the
+      // app registration hold a stale consent: everything else checks out and the
+      // tenant reads "connected", yet every Graph send fails with "Access is
+      // denied". Try the headless grant first (works where the app already holds
+      // AppRoleAssignment.ReadWrite.All); otherwise a Global Admin has to
+      // re-consent. An undetermined read is not a failure.
+      try {
+        let role = await checkSendAppRole(token, GRAPH_MAIL_SEND_ROLE_ID);
+        if (role.consented === false) {
+          const grant = await grantSendAppRole(token, GRAPH_MAIL_SEND_ROLE_ID);
+          if (grant.granted) role = await checkSendAppRole(token, GRAPH_MAIL_SEND_ROLE_ID);
+        }
+        if (role.consented === false) {
+          checks.mail_send = {
+            ok: false,
+            status: 'error',
+            message: 'The ACA app does not hold the Mail.Send permission on this tenant, so its mailboxes cannot send (they stay paused). Click "Re-grant permissions" and approve as a Global Admin, then Refresh.',
+            checked_at: now,
+          };
+        } else {
+          checks.mail_send = { ok: true, status: 'ok', checked_at: now };
+        }
+      } catch (roleErr) {
+        console.warn(`[Tenant Connect] Mail.Send role check failed: ${(roleErr as Error).message}`);
+      }
 
       // Provision prerequisites at connect time so role propagation delays
       // happen during onboarding, not at first mailbox creation. All calls

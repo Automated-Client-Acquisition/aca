@@ -12,6 +12,7 @@ const CHECK_LABELS: Record<PrerequisiteKey, string> = {
   directory_roles: "Required Exchange + User directory roles",
   security_defaults: "Security Defaults disabled",
   smtp_auth: "Tenant-level SMTP AUTH enabled",
+  mail_send: "Mail.Send permission granted to the ACA app",
 };
 
 const CHECK_ORDER: PrerequisiteKey[] = [
@@ -20,6 +21,7 @@ const CHECK_ORDER: PrerequisiteKey[] = [
   "directory_roles",
   "smtp_auth",
   "security_defaults",
+  "mail_send",
 ];
 
 interface Props {
@@ -31,9 +33,11 @@ export function TenantPrerequisitesChecklist({ tenant }: Props) {
   const initiateExoConsent = useInitiateExoConsent();
   const refreshTenant = useRefreshM365Tenant();
 
-  const allChecks: Array<{ key: PrerequisiteKey; check: PrerequisiteCheck | null }> = CHECK_ORDER.map(
-    (key) => ({ key, check: checks[key] || null })
-  );
+  // mail_send was added after tenants were validated; until a tenant is
+  // refreshed it has no result, which must not read as a failing prerequisite.
+  const allChecks: Array<{ key: PrerequisiteKey; check: PrerequisiteCheck | null }> = CHECK_ORDER
+    .map((key) => ({ key, check: checks[key] || null }))
+    .filter(({ key, check }) => key !== "mail_send" || check !== null);
 
   const totalCount = allChecks.length;
   const okCount = allChecks.filter((c) => c.check?.ok).length;
@@ -98,7 +102,7 @@ export function TenantPrerequisitesChecklist({ tenant }: Props) {
               checkKey={key}
               label={CHECK_LABELS[key]}
               check={check}
-              onReGrantConsent={key === "consent" || key === "directory_roles" || key === "security_defaults" ? handleReGrantConsent : undefined}
+              onReGrantConsent={key === "consent" || key === "directory_roles" || key === "security_defaults" || key === "mail_send" ? handleReGrantConsent : undefined}
               consentPending={initiateExoConsent.isPending}
             />
           ))}

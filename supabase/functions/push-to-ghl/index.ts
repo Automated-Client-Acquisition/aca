@@ -207,9 +207,12 @@ serve(async (req) => {
       // This allows users to remove media by setting images to [] or videoUrl to undefined
       const hasBaseContent = baseContent !== undefined && baseContent !== null;
 
-      // Extract caption: prefer baseContent (if provided AND non-empty), then stage_data, then data fields
+      // Extract caption: prefer baseContent (if provided AND non-empty), then stage_data, then data fields.
+      // captionExact (the Scheduler's per-row caption) is used as is, even blank.
       let caption = '';
-      if (hasBaseContent && baseContent.caption) {
+      if (hasBaseContent && baseContent.captionExact === true && typeof baseContent.caption === 'string') {
+        caption = baseContent.caption;
+      } else if (hasBaseContent && baseContent.caption) {
         // Use baseContent caption if it's a non-empty string
         caption = baseContent.caption;
       } else {
@@ -304,13 +307,13 @@ serve(async (req) => {
       // For Instagram carousels (multiple images), GHL uses 'post' type with multiple media items
       // For videos, use 'reel' type
       // The postType from baseContent can be 'carousel', 'feed', 'reel', 'story', etc.
+      // An explicit story wins: a video story used to go out as a reel because
+      // the video check came first.
       let ghlPostType = 'post';
-      if (videoUrl) {
-        ghlPostType = 'reel';
-      } else if (baseContent?.postType === 'reel') {
-        ghlPostType = 'reel';
-      } else if (baseContent?.postType === 'story') {
+      if (baseContent?.postType === 'story') {
         ghlPostType = 'story';
+      } else if (videoUrl || baseContent?.postType === 'reel') {
+        ghlPostType = 'reel';
       }
       // 'carousel' and 'feed' both map to 'post' in GHL API
 

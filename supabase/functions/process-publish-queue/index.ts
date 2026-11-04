@@ -7,6 +7,7 @@ import { splitFollowUpComment } from '../_shared/follow-up-comment.ts';
 import { stageText } from '../_shared/stage-text.ts';
 import { isRetryableStatus, readInvokeError } from '../_shared/invoke-error.ts';
 import { parseLinkedInDestination } from '../_shared/linkedin-identity.ts';
+import { parseZernioDestination } from '../_shared/zernio.ts';
 import { buildLinkedInContent, normalizeLinkedInContent } from '../_shared/linkedin-publishing.ts';
 import { isServiceRoleRequest } from '../_shared/org-access.ts';
 import { AuthError, unauthorized } from '../_shared/cli-auth.ts';
@@ -47,7 +48,7 @@ interface PublishQueueItem {
   source_publication_id?: string;
   variation_mode?: 'exact' | 'slight_variation' | 'regenerate';
   tweet_thread?: TweetThreadItem[] | null;
-  publish_content?: { caption: string; images?: string[]; videoUrl?: string; followUpComment?: string } | null;
+  publish_content?: { caption: string; images?: string[]; videoUrl?: string; followUpComment?: string; postType?: string } | null;
 }
 
 interface ContentOutput {
@@ -113,8 +114,7 @@ serve(async (req) => {
 
     for (const item of dueItems as PublishQueueItem[]) {
       try {
-        await processQueueItem(item, supabase);
-        publishedCount++;
+        if (await processQueueItem(item, supabase)) publishedCount++;
       } catch (error) {
         console.error(`❌ [Queue Item ${item.id}] Error:`, error);
         failedCount++;
@@ -162,10 +162,11 @@ serve(async (req) => {
 // Process Single Queue Item
 // ============================================================================
 
+/** Publishes one row; false when another run or a user change got to it first. */
 async function processQueueItem(
   item: PublishQueueItem,
   supabase: any
-): Promise<void> {
+): Promise<boolean> {
   console.log(`🚀 [Queue Item ${item.id}] Processing publish to ${item.account_id}`);
 
   // Fetch and validate FIRST (before marking as publishing to avoid stuck state)
@@ -208,24 +209,33 @@ async function processQueueItem(
     throw new Error(featureCheck.reason || "Publishing feature not available for this plan");
   }
 
-  // Claim native destinations atomically before calling the provider. Two cron
-  // runs can otherwise read the same pending page post and publish it twice.
+  // Claim every row atomically before calling the provider. Two cron runs can
+  // otherwise read the same pending row and publish it twice, and the
+  // Scheduler lets people move a row back to draft, reschedule or delete it
+  // while this batch runs: an unclaimed row is skipped, not published.
   const nativeDestination = item.account_id.startsWith('unipile:');
   if (nativeDestination && ((item.platform || '').toLowerCase() !== 'linkedin' || output.organization_id !== organizationId)) {
     throw new PublishError('LinkedIn publishing destination or content organization is invalid', false);
   }
-  let claimQuery = supabase.from('publish_queue')
-    .update({ status: 'publishing', ...(nativeDestination ? { organization_id: organizationId } : {}) })
-    .eq('id', item.id);
-  if (nativeDestination) claimQuery = claimQuery.eq('status', 'pending');
-  const { data: claimed, error: claimError } = await claimQuery.select('id');
+  const zernioAccountId = parseZernioDestination(item.account_id);
+  if (zernioAccountId && output.organization_id !== organizationId) {
+    throw new PublishError('Zernio publishing destination or content organization is invalid', false);
+  }
+  const { data: claimed, error: claimError } = await supabase.from('publish_queue')
+    .update({ status: 'publishing', ...(nativeDestination || zernioAccountId ? { organization_id: organizationId } : {}) })
+    .eq('id', item.id)
+    .eq('status', 'pending')
+    .lte('scheduled_for', new Date().toISOString())
+    .select('id');
   if (claimError) throw new Error('Could not claim publication');
-  if (nativeDestination && !claimed?.length) return;
+  if (!claimed?.length) return false;
 
-  // Build content for publishing based on pipeline type
+  // Build content for publishing based on pipeline type. A queue row may carry
+  // its own publish_content (the Scheduler's per-account caption and media);
+  // it overrides what the output would publish.
   let publishContent = nativeDestination
     ? item.publish_content ? normalizeLinkedInContent(item.publish_content) : buildLinkedInContent(output)
-    : buildPublishContent(output);
+    : applyPublishOverride(buildPublishContent(output), item.publish_content);
 
   // A writing stage may end the post with a ---FOLLOW-UP--- block (the first
   // comment, e.g. the lead magnet link on LinkedIn). Split it off before any
@@ -265,7 +275,19 @@ async function processQueueItem(
   const platform = (item.platform || '').toLowerCase();
 
   const linkedInDestination = parseLinkedInDestination(item.account_id);
-  if (linkedInDestination) {
+  if (zernioAccountId) {
+    // The organization's own Zernio account (BYOK). Checked before the platform
+    // branches: an X account connected in Zernio must not reach publish-to-twitter.
+    const { data: result, error: publishError } = await supabase.functions.invoke('publish-to-zernio', {
+      body: { account_id: item.account_id, platform, organization_id: organizationId, output_id: output.id, content: publishContent, queue_id: item.id },
+    });
+    if (publishError) {
+      const { message, status } = await readInvokeError(publishError);
+      throw new PublishError(`Publish through Zernio failed: ${message}`, isRetryableStatus(status));
+    }
+    if (!result?.success) throw new PublishError(result?.error || 'Zernio rejected the post', false);
+    if (result.warning) await logAutomation(supabase, item.autopilot_id || 'agent', item.output_id, null, 'publish_warning', null, { account_id: item.account_id, warning: result.warning });
+  } else if (linkedInDestination) {
     if (platform !== 'linkedin' || output.organization_id !== organizationId) {
       throw new PublishError('LinkedIn publishing destination or content organization is invalid', false);
     }
@@ -406,9 +428,10 @@ async function processQueueItem(
       .eq('id', item.autopilot_id);
   }
 
-  // Track in ghl_published_posts for all items (both autopilot and agent-driven)
+  // Track in ghl_published_posts for all items (both autopilot and agent-driven).
+  // Native LinkedIn and Zernio publishers write their own row, with the post id.
   try {
-    if (!linkedInDestination) await supabase.from('ghl_published_posts').insert({
+    if (!linkedInDestination && !zernioAccountId) await supabase.from('ghl_published_posts').insert({
       content_output_id: item.output_id,
       organization_id: organizationId,
       platform: item.platform || 'twitter',
@@ -427,6 +450,7 @@ async function processQueueItem(
     is_repost: item.is_repost,
     variation_mode: item.variation_mode || 'exact'
   });
+  return true;
 }
 
 // ============================================================================
@@ -441,6 +465,36 @@ function postProcessCaption(caption: string): string {
   if (!caption) return caption;
   // normalizeDashes covers em/en dashes and the ASCII '--' stand-in.
   return normalizeDashes(caption);
+}
+
+/**
+ * A queue row's own content over the output's. Media is replaced as a whole:
+ * a row that names images or a video publishes exactly those, so a picture on
+ * the output can't ride along with a row that chose a video.
+ */
+function applyPublishOverride(base: any, override: PublishQueueItem['publish_content']): any {
+  if (!override || typeof override !== 'object') return base;
+  const content = { ...base };
+  // The row's caption is exact, blank included (a picture-only post): falling
+  // back to the output would publish text the person removed.
+  if (typeof override.caption === 'string') {
+    content.caption = override.caption;
+    content.captionExact = true;
+  }
+  const images = Array.isArray(override.images) ? override.images.filter((u) => typeof u === 'string' && u) : null;
+  const videoUrl = typeof override.videoUrl === 'string' && override.videoUrl ? override.videoUrl : null;
+  if (images || videoUrl) {
+    content.images = images ?? [];
+    content.videoUrl = videoUrl ?? undefined;
+    content.postType = videoUrl ? 'reel' : (images && images.length > 1 ? 'CAROUSEL' : 'POST');
+  }
+  // The Scheduler only sets 'story' on Instagram/Facebook rows; push-to-ghl
+  // sends it as a GHL story, picture or video.
+  if (override.postType === 'story') content.postType = 'story';
+  if (typeof override.followUpComment === 'string' && override.followUpComment.trim()) {
+    content.followUpComment = override.followUpComment;
+  }
+  return content;
 }
 
 /**
