@@ -123,6 +123,7 @@ export function MarketingFooter() {
           ))}
         </div>
       </div>
+      {/* linkorva:badges */}
     </footer>
   );
 }
